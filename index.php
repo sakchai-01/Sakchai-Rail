@@ -1268,9 +1268,10 @@ declare(strict_types=1);
         Price: Number(priceVal)
       };
 
+      // ตอนกดส่ง: ปิดการกดชั่วคราวและเปลี่ยนแค่ข้อความ (ไม่มีวงกลมหมุน)
       const saveBtn = document.getElementById('saveProductBtn');
       saveBtn.disabled = true;
-      saveBtn.innerHTML = `<span class="spinner-border spinner-border-sm me-1"></span>กำลังบันทึก...`;
+      saveBtn.style.opacity = "0.7"; // ทำให้ปุ่มดูจางลงนิดหน่อยบ่งบอกว่ากำลังทำงาน
 
       try {
         if (editingProductId) {
@@ -1294,13 +1295,15 @@ declare(strict_types=1);
       } catch (err) {
         console.error("Save Product Error:", err);
         showToast('บันทึกข้อมูลล้มเหลว: ' + (err.message || err), 'danger');
+        
       } finally {
-        // บล็อกนี้จะทำงานเสมอ ปลดล็อคปุ่มและคืนค่าสถานะปุ่มทันที
+        // คืนค่าปุ่มให้กลับมาปกติทันที
         const saveBtnEl = document.getElementById('saveProductBtn');
         if (saveBtnEl) {
           saveBtnEl.disabled = false;
+          saveBtnEl.style.opacity = "1";
         }
-        updateSaveBtnLabel();
+        updateSaveBtnLabel(); // เปลี่ยนข้อความปุ่มกลับเป็น "เพิ่มสินค้าใหม่" หรือ "บันทึกการแก้ไข"
       }
     });
 
