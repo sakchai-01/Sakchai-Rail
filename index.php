@@ -346,11 +346,6 @@ declare(strict_types=1);
             <i class="bi bi-tags me-1"></i> หมวดหมู่สินค้า (Categories)
           </button>
         </li>
-        <li class="nav-item">
-          <button class="nav-link" data-bs-toggle="pill" data-bs-target="#tabDeployment" type="button" id="tabBtnDeployment">
-            <i class="bi bi-cloud-arrow-up me-1"></i> คู่มือ Deploy & สรุปส่งงาน
-          </button>
-        </li>
       </ul>
 
       <div class="text-muted small d-none d-md-block">
@@ -569,9 +564,14 @@ declare(strict_types=1);
               <h2 class="h5 fw-bold mb-1">รายชื่อผู้จัดส่งสินค้า (Suppliers)</h2>
               <p class="text-muted small mb-0">ข้อมูลจากตาราง <code>tb_suppliers</code> ในฐานข้อมูล Northwind</p>
             </div>
-            <div class="input-group" style="max-width: 320px;">
-              <span class="input-group-text bg-white"><i class="bi bi-search text-muted"></i></span>
-              <input type="text" class="form-control border-start-0" id="supplierSearchInput" placeholder="ค้นหาชื่อผู้จัดส่ง หรือเมือง...">
+            <div class="d-flex align-items-center gap-2">
+              <button class="btn btn-primary-custom btn-sm rounded-3" data-bs-toggle="modal" data-bs-target="#addSupplierModal">
+                <i class="bi bi-plus-circle me-1"></i> เพิ่มผู้จัดส่งใหม่
+              </button>
+              <div class="input-group" style="max-width: 280px;">
+                <span class="input-group-text bg-white"><i class="bi bi-search text-muted"></i></span>
+                <input type="text" class="form-control border-start-0" id="supplierSearchInput" placeholder="ค้นหาชื่อผู้จัดส่ง หรือเมือง...">
+              </div>
             </div>
           </div>
 
@@ -599,88 +599,18 @@ declare(strict_types=1);
       <!-- ================= Tab 3: Categories Directory ================= -->
       <div class="tab-pane fade" id="tabCategories" role="tabpanel">
         <div class="content-card p-4">
-          <div class="mb-4">
-            <h2 class="h5 fw-bold mb-1">หมวดหมู่สินค้าทั้งหมด (Categories)</h2>
-            <p class="text-muted small mb-0">ข้อมูลหมวดหมู่สินค้าจากตาราง <code>tb_categories</code></p>
+          <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4 pb-2 border-bottom">
+            <div>
+              <h2 class="h5 fw-bold mb-1">หมวดหมู่สินค้าทั้งหมด (Categories)</h2>
+              <p class="text-muted small mb-0">ข้อมูลหมวดหมู่สินค้าจากตาราง <code>tb_categories</code></p>
+            </div>
+            <button class="btn btn-primary-custom btn-sm rounded-3" data-bs-toggle="modal" data-bs-target="#addCategoryModal">
+              <i class="bi bi-plus-circle me-1"></i> เพิ่มหมวดหมู่ใหม่
+            </button>
           </div>
 
           <div class="row g-3" id="categoriesCardContainer">
             <div class="col-12 text-center py-5 text-muted">กำลังโหลดข้อมูลหมวดหมู่...</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- ================= Tab 4: Deployment & Submission Helper ================= -->
-      <div class="tab-pane fade" id="tabDeployment" role="tabpanel">
-        <div class="content-card p-4">
-          <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4 pb-3 border-bottom">
-            <div>
-              <h2 class="h5 fw-bold mb-1">คู่มือขั้นตอนการ Deploy และจัดเตรียมส่งงาน</h2>
-              <p class="text-muted small mb-0">Course Project: Development and Deployment of Web App with PHP and MySQL</p>
-            </div>
-            <a href="health.php" target="_blank" class="btn btn-primary-custom btn-sm">
-              <i class="bi bi-box-arrow-up-right me-1"></i>เปิดหน้า Health Check ตรง
-            </a>
-          </div>
-
-          <div class="row g-4">
-            <div class="col-12 col-lg-6">
-              <h3 class="h6 fw-bold text-primary mb-3"><i class="bi bi-1-circle me-2"></i>ข้อมูลสำหรับส่งงาน (Submission Details)</h3>
-              <div class="list-group mb-4">
-                <div class="list-group-item d-flex justify-content-between align-items-center">
-                  <div>
-                    <div class="fw-semibold">1. Live Web Application URL</div>
-                    <small class="text-muted" id="detectedLiveUrl">กำลังตรวจหา URL...</small>
-                  </div>
-                  <button class="btn btn-sm btn-outline-secondary" onclick="copyCurrentUrl()">
-                    <i class="bi bi-clipboard me-1"></i>คัดลอก URL
-                  </button>
-                </div>
-                <div class="list-group-item d-flex justify-content-between align-items-center">
-                  <div>
-                    <div class="fw-semibold">2. Health Check Endpoint</div>
-                    <small class="text-muted" id="detectedHealthUrl">/health.php</small>
-                  </div>
-                  <button class="btn btn-sm btn-outline-secondary" onclick="copyHealthUrl()">
-                    <i class="bi bi-clipboard me-1"></i>คัดลอก
-                  </button>
-                </div>
-                <div class="list-group-item">
-                  <div class="fw-semibold">3. Process Documentation (Google Docs)</div>
-                  <small class="text-muted">โปรเจกต์ได้เตรียมไฟล์ <code>DEPLOYMENT_DOCS.md</code> สามารถคัดลอกข้อความไปวางใน Google Docs ได้ทันที</small>
-                </div>
-                <div class="list-group-item">
-                  <div class="fw-semibold">4. Source Code (Google Drive)</div>
-                  <small class="text-muted">บีบอัดโฟลเดอร์โปรเจกต์นี้ทั้งหมด (ZIP) ขึ้น Google Drive แล้วเปิดสิทธิ์ Anyone with the link can view</small>
-                </div>
-              </div>
-
-              <h3 class="h6 fw-bold text-primary mb-3"><i class="bi bi-2-circle me-2"></i>สถาปัตยกรรมระบบ (Architecture)</h3>
-              <ul class="list-unstyled small text-muted">
-                <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i><strong>Backend:</strong> PHP 8.2+ พร้อม PDO MySQL Prepared Statements ป้องกัน SQL Injection 100%</li>
-                <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i><strong>Database:</strong> MySQL บน Railway PaaS รองรับไฟล์ <code>dbNorthwind.sql</code> และ Auto-Initialization</li>
-                <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i><strong>API Design:</strong> REST-style JSON API (GET, POST, PUT, DELETE) ผ่าน <code>api.php</code></li>
-                <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i><strong>Containerization:</strong> มี <code>Dockerfile</code> และ <code>railway.json</code> รองรับ dynamic <code>$PORT</code> บน Railway</li>
-              </ul>
-            </div>
-
-            <div class="col-12 col-lg-6">
-              <h3 class="h6 fw-bold text-primary mb-3"><i class="bi bi-3-circle me-2"></i>ขั้นตอนการ Deploy บน Railway (Quick Steps)</h3>
-              <div class="bg-light p-3 rounded-3 small">
-                <ol class="mb-0 ps-3">
-                  <li class="mb-2"><strong>สร้างโปรเจกต์ใน Railway:</strong> เข้า <a href="https://railway.com/" target="_blank">railway.com</a> แล้วกด New Project</li>
-                  <li class="mb-2"><strong>เพิ่ม MySQL Database:</strong> กด Add Service → เลือก <strong>Database</strong> → เลือก <strong>MySQL</strong></li>
-                  <li class="mb-2"><strong>เชื่อม GitHub Repository:</strong> กด Add Service → เลือก <strong>GitHub Repo</strong> แล้วเลือกโปรเจกต์นี้</li>
-                  <li class="mb-2"><strong>ตั้งค่า Environment Variable:</strong>
-                    <div class="mt-1 p-2 bg-white rounded border font-monospace" style="font-size: 0.8rem;">
-                      DATABASE_URL = ${{MySQL.MYSQL_PRIVATE_URL}}
-                    </div>
-                  </li>
-                  <li class="mb-2"><strong>สร้าง Public Domain:</strong> ไปที่หน้า Setting ของ Web Service → คลิก <strong>Generate Domain</strong> เพื่อรับ Live URL</li>
-                  <li class="mb-0"><strong>ระบบพร้อมใช้งานทันที:</strong> โค้ดของระบบจะตรวจสอบและ Initial ตารางจาก <code>dbNorthwind.sql</code> ให้อัตโนมัติเมื่อเปิดครั้งแรก!</li>
-                </ol>
-              </div>
-            </div>
           </div>
         </div>
       </div>
@@ -753,6 +683,102 @@ declare(strict_types=1);
     </div>
   </div>
 
+  <!-- ================= Add Supplier Modal ================= -->
+  <div class="modal fade" id="addSupplierModal" tabindex="-1" aria-labelledby="addSupplierModalTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content rounded-4 border-0 shadow">
+        <div class="modal-header border-0 pb-0">
+          <div class="d-flex align-items-center gap-2">
+            <div class="stat-icon bg-warning bg-opacity-10 text-warning" style="width: 36px; height: 36px;">
+              <i class="bi bi-truck"></i>
+            </div>
+            <h3 class="modal-title h5 fw-bold mb-0" id="addSupplierModalTitle">เพิ่มผู้จัดส่งสินค้าใหม่ (Add Supplier)</h3>
+          </div>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <form id="addSupplierForm" novalidate>
+          <div class="modal-body py-3">
+            <div class="mb-3">
+              <label class="form-label" for="addSupplierName">ชื่อบริษัท / ผู้จัดส่ง <span class="text-danger">*</span></label>
+              <input type="text" class="form-control" id="addSupplierName" placeholder="เช่น ABC Logistics, Siam Foods" maxlength="100" required>
+              <div class="invalid-feedback">กรุณาระบุชื่อผู้จัดส่งสินค้า</div>
+            </div>
+            <div class="mb-3">
+              <label class="form-label" for="addContactName">ชื่อผู้ติดต่อ</label>
+              <input type="text" class="form-control" id="addContactName" placeholder="เช่น สมชาย ใจดี" maxlength="100">
+            </div>
+            <div class="mb-3">
+              <label class="form-label" for="addAddress">ที่อยู่</label>
+              <input type="text" class="form-control" id="addAddress" placeholder="เช่น 123 ถ.สุขุมวิท" maxlength="150">
+            </div>
+            <div class="row g-2 mb-3">
+              <div class="col-7">
+                <label class="form-label" for="addCity">เมือง / จังหวัด</label>
+                <input type="text" class="form-control" id="addCity" placeholder="เช่น Bangkok, Chiang Mai" maxlength="50">
+              </div>
+              <div class="col-5">
+                <label class="form-label" for="addPostalCode">รหัสไปรษณีย์</label>
+                <input type="text" class="form-control" id="addPostalCode" placeholder="เช่น 10110" maxlength="20">
+              </div>
+            </div>
+            <div class="row g-2">
+              <div class="col-6">
+                <label class="form-label" for="addCountry">ประเทศ</label>
+                <input type="text" class="form-control" id="addCountry" placeholder="เช่น Thailand, Japan" maxlength="50">
+              </div>
+              <div class="col-6">
+                <label class="form-label" for="addPhone">เบอร์โทรศัพท์</label>
+                <input type="text" class="form-control" id="addPhone" placeholder="เช่น (02) 123-4567" maxlength="50">
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer border-0 pt-0">
+            <button type="button" class="btn btn-light rounded-3 px-3" data-bs-dismiss="modal">ยกเลิก</button>
+            <button type="submit" class="btn btn-primary-custom rounded-3 px-4" id="saveSupplierBtn">
+              <i class="bi bi-plus-circle me-1"></i>บันทึกผู้จัดส่ง
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= Add Category Modal ================= -->
+  <div class="modal fade" id="addCategoryModal" tabindex="-1" aria-labelledby="addCategoryModalTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content rounded-4 border-0 shadow">
+        <div class="modal-header border-0 pb-0">
+          <div class="d-flex align-items-center gap-2">
+            <div class="stat-icon bg-info bg-opacity-10 text-info" style="width: 36px; height: 36px;">
+              <i class="bi bi-tag"></i>
+            </div>
+            <h3 class="modal-title h5 fw-bold mb-0" id="addCategoryModalTitle">เพิ่มหมวดหมู่สินค้าใหม่ (Add Category)</h3>
+          </div>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <form id="addCategoryForm" novalidate>
+          <div class="modal-body py-3">
+            <div class="mb-3">
+              <label class="form-label" for="addCategoryName">ชื่อหมวดหมู่สินค้า <span class="text-danger">*</span></label>
+              <input type="text" class="form-control" id="addCategoryName" placeholder="เช่น Bakery, Electronics, Organic" maxlength="100" required>
+              <div class="invalid-feedback">กรุณาระบุชื่อหมวดหมู่สินค้า</div>
+            </div>
+            <div class="mb-3">
+              <label class="form-label" for="addCategoryDesc">คำอธิบายหมวดหมู่</label>
+              <textarea class="form-control" id="addCategoryDesc" rows="3" placeholder="ระบุรายละเอียดเพิ่มเติมเกี่ยวกับสินค้าในหมวดหมู่นี้..." maxlength="255"></textarea>
+            </div>
+          </div>
+          <div class="modal-footer border-0 pt-0">
+            <button type="button" class="btn btn-light rounded-3 px-3" data-bs-dismiss="modal">ยกเลิก</button>
+            <button type="submit" class="btn btn-primary-custom rounded-3 px-4" id="saveCategoryBtn">
+              <i class="bi bi-plus-circle me-1"></i>บันทึกหมวดหมู่
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
   <!-- Bootstrap JS Bundle -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
@@ -772,6 +798,8 @@ declare(strict_types=1);
     // Bootstrap Modal instances
     const deleteModal = new bootstrap.Modal(document.getElementById('deleteModal'));
     const healthModal = new bootstrap.Modal(document.getElementById('healthModal'));
+    const addSupplierModal = new bootstrap.Modal(document.getElementById('addSupplierModal'));
+    const addCategoryModal = new bootstrap.Modal(document.getElementById('addCategoryModal'));
 
     // --- Toast Notification System ---
     function showToast(message, type = 'success') {
@@ -1344,23 +1372,89 @@ declare(strict_types=1);
       renderSuppliersTab(filtered);
     });
 
-    // Helper functions for deployment tab
-    function copyCurrentUrl() {
-      navigator.clipboard.writeText(window.location.origin + window.location.pathname);
-      showToast('คัดลอก Live URL ลง Clipboard แล้ว', 'info');
-    }
-    function copyHealthUrl() {
-      navigator.clipboard.writeText(window.location.origin + '/health.php');
-      showToast('คัดลอก Health URL ลง Clipboard แล้ว', 'info');
-    }
+    // --- Add Supplier Form Handler ---
+    document.getElementById('addSupplierForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      const nameInput = document.getElementById('addSupplierName');
+      const name = nameInput.value.trim();
+
+      if (!name) {
+        nameInput.classList.add('is-invalid');
+        return;
+      }
+      nameInput.classList.remove('is-invalid');
+
+      const payload = {
+        SupplierName: name,
+        ContactName: document.getElementById('addContactName').value.trim(),
+        Address: document.getElementById('addAddress').value.trim(),
+        City: document.getElementById('addCity').value.trim(),
+        PostalCode: document.getElementById('addPostalCode').value.trim(),
+        Country: document.getElementById('addCountry').value.trim(),
+        Phone: document.getElementById('addPhone').value.trim(),
+      };
+
+      const btn = document.getElementById('saveSupplierBtn');
+      btn.disabled = true;
+      btn.innerHTML = `<span class="spinner-border spinner-border-sm me-1"></span>กำลังบันทึก...`;
+
+      try {
+        const res = await apiRequest(`${API_BASE}?resource=suppliers`, {
+          method: 'POST',
+          body: JSON.stringify(payload)
+        });
+        addSupplierModal.hide();
+        this.reset();
+        showToast(res.message || 'เพิ่มผู้จัดส่งสินค้าสำเร็จ', 'success');
+        await loadMetadata();
+      } catch (err) {
+        showToast('เพิ่มผู้จัดส่งไม่สำเร็จ: ' + err.message, 'danger');
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = `<i class="bi bi-plus-circle me-1"></i>บันทึกผู้จัดส่ง`;
+      }
+    });
+
+    // --- Add Category Form Handler ---
+    document.getElementById('addCategoryForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      const nameInput = document.getElementById('addCategoryName');
+      const name = nameInput.value.trim();
+
+      if (!name) {
+        nameInput.classList.add('is-invalid');
+        return;
+      }
+      nameInput.classList.remove('is-invalid');
+
+      const payload = {
+        CategoryName: name,
+        Description: document.getElementById('addCategoryDesc').value.trim(),
+      };
+
+      const btn = document.getElementById('saveCategoryBtn');
+      btn.disabled = true;
+      btn.innerHTML = `<span class="spinner-border spinner-border-sm me-1"></span>กำลังบันทึก...`;
+
+      try {
+        const res = await apiRequest(`${API_BASE}?resource=categories`, {
+          method: 'POST',
+          body: JSON.stringify(payload)
+        });
+        addCategoryModal.hide();
+        this.reset();
+        showToast(res.message || 'เพิ่มหมวดหมู่สินค้าสำเร็จ', 'success');
+        await loadMetadata();
+      } catch (err) {
+        showToast('เพิ่มหมวดหมู่ไม่สำเร็จ: ' + err.message, 'danger');
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = `<i class="bi bi-plus-circle me-1"></i>บันทึกหมวดหมู่`;
+      }
+    });
 
     // --- Initialization on page load ---
     document.addEventListener('DOMContentLoaded', async () => {
-      // Update detected URLs in deployment tab
-      const detectedUrl = window.location.origin + window.location.pathname;
-      document.getElementById('detectedLiveUrl').textContent = detectedUrl;
-      document.getElementById('detectedHealthUrl').textContent = window.location.origin + '/health.php';
-
       await loadMetadata();
       await loadProducts();
     });
