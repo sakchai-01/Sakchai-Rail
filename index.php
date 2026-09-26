@@ -259,7 +259,7 @@ declare(strict_types=1);
             <h1 class="h5 fw-bold mb-0">DB-Northwind</h1>
             
           </div>
-          <p class="text-muted small mb-0">ระบบบริหารจัดการสินค้า • PHP & MySQL</p>
+          <p class="text-muted small mb-0">ระบบบริหารจัดการสินค้าและคลังสินค้า • PHP & MySQL</p>
         </div>
       </div>
 
@@ -280,7 +280,7 @@ declare(strict_types=1);
 
     <!-- Dashboard Stat Cards -->
     <section class="row g-3 mb-4" id="statsSection">
-      <div class="col-6 col-md-3">
+      <div class="col-12 col-md-4">
         <div class="stat-card d-flex align-items-center gap-3">
           <div class="stat-icon bg-primary bg-opacity-10 text-primary">
             <i class="bi bi-box-seam"></i>
@@ -291,7 +291,7 @@ declare(strict_types=1);
           </div>
         </div>
       </div>
-      <div class="col-6 col-md-3">
+      <div class="col-12 col-md-4">
         <div class="stat-card d-flex align-items-center gap-3">
           <div class="stat-icon bg-info bg-opacity-10 text-info">
             <i class="bi bi-tags"></i>
@@ -302,7 +302,7 @@ declare(strict_types=1);
           </div>
         </div>
       </div>
-      <div class="col-6 col-md-3">
+      <div class="col-12 col-md-4">
         <div class="stat-card d-flex align-items-center gap-3">
           <div class="stat-icon bg-warning bg-opacity-10 text-warning">
             <i class="bi bi-truck"></i>
@@ -313,7 +313,6 @@ declare(strict_types=1);
           </div>
         </div>
       </div>
-      
     </section>
 
     <!-- Main Navigation Pills -->
@@ -893,7 +892,10 @@ declare(strict_types=1);
           document.getElementById('statTotalProducts').textContent = statsRes.data.total_products.toLocaleString();
           document.getElementById('statTotalCategories').textContent = statsRes.data.total_categories.toLocaleString();
           document.getElementById('statTotalSuppliers').textContent = statsRes.data.total_suppliers.toLocaleString();
-          document.getElementById('statAvgPrice').textContent = '$' + Number(statsRes.data.avg_price).toFixed(2);
+          const avgEl = document.getElementById('statAvgPrice');
+          if (avgEl) {
+            avgEl.textContent = '$' + Number(statsRes.data.avg_price).toFixed(2);
+          }
         }
 
         updateApiStatus(true, 'API Connected • DB Online');
