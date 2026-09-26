@@ -1273,16 +1273,15 @@ declare(strict_types=1);
       saveBtn.innerHTML = `<span class="spinner-border spinner-border-sm me-1"></span>กำลังบันทึก...`;
 
       try {
-        let res;
         if (editingProductId) {
           payload.ProductID = editingProductId;
-          res = await apiRequest(`${API_BASE}?resource=products`, {
+          const res = await apiRequest(`${API_BASE}?resource=products`, {
             method: 'PUT',
             body: JSON.stringify(payload)
           });
           showToast(res.message || 'แก้ไขข้อมูลสินค้าเรียบร้อยแล้ว', 'success');
         } else {
-          res = await apiRequest(`${API_BASE}?resource=products`, {
+          const res = await apiRequest(`${API_BASE}?resource=products`, {
             method: 'POST',
             body: JSON.stringify(payload)
           });
@@ -1292,13 +1291,15 @@ declare(strict_types=1);
         resetForm();
         await loadMetadata();
         await loadProducts();
-
       } catch (err) {
-        console.error("Save Product Error:", err); // พิมพ์ Error ลง Console เพื่อให้เราเห็นสาเหตุที่แท้จริง
+        console.error("Save Product Error:", err);
         showToast('บันทึกข้อมูลล้มเหลว: ' + (err.message || err), 'danger');
       } finally {
-        // บล็อกนี้จะทำงานเสมอ ไม่ว่าจะสำเร็จหรือเกิด Error ช่วยปลดล็อคปุ่มไม่ให้ค้างหมุน
-        saveBtn.disabled = false;
+        // บล็อกนี้จะทำงานเสมอ ปลดล็อคปุ่มและคืนค่าสถานะปุ่มทันที
+        const saveBtnEl = document.getElementById('saveProductBtn');
+        if (saveBtnEl) {
+          saveBtnEl.disabled = false;
+        }
         updateSaveBtnLabel();
       }
     });
@@ -1355,7 +1356,7 @@ declare(strict_types=1);
       document.getElementById('formModeBadge').className = 'badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 rounded-pill px-2 py-1';
       document.getElementById('cancelEditBtn').classList.add('d-none');
 
-      // เพิ่มบรรทัดนี้ เพื่อบังคับให้ปุ่มปลดล็อคและเปลี่ยนข้อความเป็น "เพิ่มสินค้าใหม่" ทันที
+      // บังคับปลดล็อคปุ่มที่นี่ด้วย เพื่อป้องกันปุ่มค้างหมุนตอนรีเซ็ตฟอร์ม
       const saveBtn = document.getElementById('saveProductBtn');
       if (saveBtn) {
         saveBtn.disabled = false;
