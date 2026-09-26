@@ -1273,15 +1273,16 @@ declare(strict_types=1);
       saveBtn.innerHTML = `<span class="spinner-border spinner-border-sm me-1"></span>กำลังบันทึก...`;
 
       try {
+        let res;
         if (editingProductId) {
           payload.ProductID = editingProductId;
-          const res = await apiRequest(`${API_BASE}?resource=products`, {
+          res = await apiRequest(`${API_BASE}?resource=products`, {
             method: 'PUT',
             body: JSON.stringify(payload)
           });
           showToast(res.message || 'แก้ไขข้อมูลสินค้าเรียบร้อยแล้ว', 'success');
         } else {
-          const res = await apiRequest(`${API_BASE}?resource=products`, {
+          res = await apiRequest(`${API_BASE}?resource=products`, {
             method: 'POST',
             body: JSON.stringify(payload)
           });
@@ -1289,15 +1290,14 @@ declare(strict_types=1);
         }
 
         resetForm();
-        try {
-          await loadMetadata();
-          await loadProducts();
-        } catch (refreshErr) {
-          console.warn('Post-save refresh error:', refreshErr);
-        }
+        await loadMetadata();
+        await loadProducts();
+
       } catch (err) {
+        console.error("Save Product Error:", err); // พิมพ์ Error ลง Console เพื่อให้เราเห็นสาเหตุที่แท้จริง
         showToast('บันทึกข้อมูลล้มเหลว: ' + (err.message || err), 'danger');
       } finally {
+        // บล็อกนี้จะทำงานเสมอ ไม่ว่าจะสำเร็จหรือเกิด Error ช่วยปลดล็อคปุ่มไม่ให้ค้างหมุน
         saveBtn.disabled = false;
         updateSaveBtnLabel();
       }
