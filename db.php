@@ -6,12 +6,20 @@ declare(strict_types=1);
  * Compatible with Railway MySQL PaaS and Local Development (XAMPP / Docker / CLI)
  */
 
+function envVal(string $key, ?string $default = null): ?string {
+    $v = getenv($key);
+    if ($v !== false && $v !== '') return (string)$v;
+    if (isset($_SERVER[$key]) && $_SERVER[$key] !== '') return (string)$_SERVER[$key];
+    if (isset($_ENV[$key]) && $_ENV[$key] !== '') return (string)$_ENV[$key];
+    return $default;
+}
+
 function getDbConfig(): array {
-    // 1. ตรวจสอบ Connection URL จาก Railway (DATABASE_URL, MYSQL_URL, MYSQL_PRIVATE_URL)
-    $dbUrl = getenv('DATABASE_URL') 
-          ?: getenv('MYSQL_URL') 
-          ?: getenv('MYSQL_PRIVATE_URL') 
-          ?: getenv('MYSQL_PUBLIC_URL')
+    // 1. ตรวจสอบ Connection URL จาก Railway (DATABASE_URL, MYSQL_URL, MYSQL_PRIVATE_URL, MYSQL_PUBLIC_URL)
+    $dbUrl = envVal('DATABASE_URL') 
+          ?: envVal('MYSQL_URL') 
+          ?: envVal('MYSQL_PRIVATE_URL') 
+          ?: envVal('MYSQL_PUBLIC_URL')
           ?: '';
 
     if ($dbUrl !== '') {
@@ -21,8 +29,7 @@ function getDbConfig(): array {
         $user = $opts['user'] ?? 'root';
         $pass = $opts['pass'] ?? '';
         $pathDb = isset($opts['path']) ? ltrim($opts['path'], '/') : '';
-        // หาก Railway มีชื่อฐานข้อมูลใน URL ให้ใช้ค่านั้น หรือใช้ DB_NAME / MYSQLDATABASE
-        $db = getenv('DB_NAME') ?: getenv('MYSQLDATABASE') ?: ($pathDb !== '' ? $pathDb : 'db_northwind');
+        $db = envVal('DB_NAME') ?: envVal('MYSQLDATABASE') ?: ($pathDb !== '' ? $pathDb : 'db_northwind');
 
         return [
             'host' => $host,
@@ -34,12 +41,17 @@ function getDbConfig(): array {
         ];
     }
 
-    // 2. กรณีแยกตัวแปรเดี่ยว (เช่น Local .env หรือ Railway Individual Variables)
-    $host = getenv('DB_HOST') ?: getenv('MYSQLHOST') ?: '127.0.0.1';
-    $port = (int)(getenv('DB_PORT') ?: getenv('MYSQLPORT') ?: 3306);
-    $user = getenv('DB_USER') ?: getenv('DB_USERNAME') ?: getenv('MYSQLUSER') ?: 'root';
-    $pass = getenv('DB_PASS') ?: getenv('DB_PASSWORD') ?: getenv('MYSQLPASSWORD') ?: '';
-    $db   = getenv('DB_NAME') ?: getenv('DB_DATABASE') ?: getenv('MYSQLDATABASE') ?: 'db_northwind';
+    // 2. กรณีแยกตัวแปรเดี่ยว (เช่น Railway Individual Variables หรือ Local .env)
+    $host = envVal('MYSQLHOST') ?: envVal('DB_HOST') ?: envVal('MYSQL_HOST') ?: '';
+    $port = (int)(envVal('MYSQLPORT') ?: envVal('DB_PORT') ?: 3306);
+    $user = envVal('MYSQLUSER') ?: envVal('DB_USER') ?: envVal('DB_USERNAME') ?: 'root';
+    $pass = envVal('MYSQLPASSWORD') ?: envVal('DB_PASS') ?: envVal('DB_PASSWORD') ?: '';
+    $db   = envVal('MYSQLDATABASE') ?: envVal('DB_NAME') ?: envVal('DB_DATABASE') ?: 'db_northwind';
+
+    if ($host === '') {
+        // หากไม่มีทั้ง URL และ host แสดงว่ายังไม่ได้ตั้งค่า Environment Variable บน Railway
+        $host = '127.0.0.1';
+    }
 
     return [
         'host' => $host,
