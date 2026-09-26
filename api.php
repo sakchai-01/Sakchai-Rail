@@ -135,40 +135,107 @@ try {
     $sId      = $schema['suppliers']['id'];
     $sName    = $schema['suppliers']['name'];
     $sContact = $schema['suppliers']['contact'] ?? 'ContactName';
+    $sAddress = $schema['suppliers']['address'] ?? 'Address';
     $sCity    = $schema['suppliers']['city'] ?? 'City';
+    $sPostal  = $schema['suppliers']['postal_code'] ?? 'PostalCode';
     $sCountry = $schema['suppliers']['country'] ?? 'Country';
     $sPhone   = $schema['suppliers']['phone'] ?? 'Phone';
 
     $cTable = $schema['categories']['table'];
     $cId    = $schema['categories']['id'];
     $cName  = $schema['categories']['name'];
+    $cDesc  = $schema['categories']['desc'] ?? 'Description';
 
-    // 1. Resource: categories
+    // 1. Resource: categories (GET / POST)
     if ($resource === 'categories') {
-        if ($method !== 'GET') {
-            jsonResponse(false, 'Method ไม่รองรับสำหรับ categories', [], 405);
+        if ($method === 'GET') {
+            $stmt = $pdo->query("SELECT {$cId} AS CategoryID, {$cName} AS CategoryName, {$cDesc} AS Description FROM {$cTable} ORDER BY {$cName} ASC");
+            $rows = $stmt->fetchAll();
+            jsonResponse(true, 'โหลดข้อมูลหมวดหมู่สินค้าสำเร็จ', $rows);
         }
-        $stmt = $pdo->query("SELECT {$cId} AS CategoryID, {$cName} AS CategoryName FROM {$cTable} ORDER BY {$cName} ASC");
-        $rows = $stmt->fetchAll();
-        jsonResponse(true, 'โหลดข้อมูลหมวดหมู่สินค้าสำเร็จ', $rows);
+
+        if ($method === 'POST') {
+            $data = requestBody();
+            $name = trim((string)($data['CategoryName'] ?? ''));
+            $desc = trim((string)($data['Description'] ?? ''));
+
+            if ($name === '') {
+                jsonResponse(false, 'กรุณาระบุชื่อหมวดหมู่สินค้า (CategoryName)', [], 422);
+            }
+            if (mb_strlen($name) > 100) {
+                jsonResponse(false, 'ชื่อหมวดหมู่ต้องมีความยาวไม่เกิน 100 ตัวอักษร', [], 422);
+            }
+
+            // คำนวณรหัส ID ถัดไป ป้องกัน error กรณีตารางไม่มี auto_increment
+            $nextId = (int)$pdo->query("SELECT COALESCE(MAX({$cId}), 0) + 1 FROM {$cTable}")->fetchColumn();
+
+            $stmt = $pdo->prepare("INSERT INTO {$cTable} ({$cId}, {$cName}, {$cDesc}) VALUES (?, ?, ?)");
+            $stmt->execute([$nextId, $name, $desc]);
+
+            jsonResponse(true, "เพิ่มหมวดหมู่สินค้า '{$name}' (รหัส #{$nextId}) สำเร็จแล้ว", [
+                'CategoryID'   => $nextId,
+                'CategoryName' => $name,
+                'Description'  => $desc,
+            ], 201);
+        }
+
+        jsonResponse(false, 'Method ไม่รองรับสำหรับ categories', [], 405);
     }
 
-    // 2. Resource: suppliers
+    // 2. Resource: suppliers (GET / POST)
     if ($resource === 'suppliers') {
-        if ($method !== 'GET') {
-            jsonResponse(false, 'Method ไม่รองรับสำหรับ suppliers', [], 405);
+        if ($method === 'GET') {
+            $stmt = $pdo->query("SELECT 
+                {$sId} AS SupplierID, 
+                {$sName} AS SupplierName, 
+                {$sContact} AS ContactName, 
+                {$sAddress} AS Address,
+                {$sCity} AS City, 
+                {$sPostal} AS PostalCode,
+                {$sCountry} AS Country, 
+                {$sPhone} AS Phone 
+            FROM {$sTable} 
+            ORDER BY {$sName} ASC");
+            $rows = $stmt->fetchAll();
+            jsonResponse(true, 'โหลดข้อมูลผู้จัดส่งสำเร็จ', $rows);
         }
-        $stmt = $pdo->query("SELECT 
-            {$sId} AS SupplierID, 
-            {$sName} AS SupplierName, 
-            {$sContact} AS ContactName, 
-            {$sCity} AS City, 
-            {$sCountry} AS Country, 
-            {$sPhone} AS Phone 
-        FROM {$sTable} 
-        ORDER BY {$sName} ASC");
-        $rows = $stmt->fetchAll();
-        jsonResponse(true, 'โหลดข้อมูลผู้จัดส่งสำเร็จ', $rows);
+
+        if ($method === 'POST') {
+            $data = requestBody();
+            $name    = trim((string)($data['SupplierName'] ?? ''));
+            $contact = trim((string)($data['ContactName'] ?? ''));
+            $address = trim((string)($data['Address'] ?? ''));
+            $city    = trim((string)($data['City'] ?? ''));
+            $postal  = trim((string)($data['PostalCode'] ?? ''));
+            $country = trim((string)($data['Country'] ?? ''));
+            $phone   = trim((string)($data['Phone'] ?? ''));
+
+            if ($name === '') {
+                jsonResponse(false, 'กรุณาระบุชื่อบริษัท / ผู้จัดส่ง (SupplierName)', [], 422);
+            }
+            if (mb_strlen($name) > 100) {
+                jsonResponse(false, 'ชื่อผู้จัดส่งต้องมีความยาวไม่เกิน 100 ตัวอักษร', [], 422);
+            }
+
+            // คำนวณรหัส ID ถัดไป ป้องกัน error กรณีตารางไม่มี auto_increment
+            $nextId = (int)$pdo->query("SELECT COALESCE(MAX({$sId}), 0) + 1 FROM {$sTable}")->fetchColumn();
+
+            $stmt = $pdo->prepare("INSERT INTO {$sTable} ({$sId}, {$sName}, {$sContact}, {$sAddress}, {$sCity}, {$sPostal}, {$sCountry}, {$sPhone}) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+            $stmt->execute([$nextId, $name, $contact, $address, $city, $postal, $country, $phone]);
+
+            jsonResponse(true, "เพิ่มผู้จัดส่ง '{$name}' (รหัส #{$nextId}) สำเร็จแล้ว", [
+                'SupplierID'   => $nextId,
+                'SupplierName' => $name,
+                'ContactName'  => $contact,
+                'Address'      => $address,
+                'City'         => $city,
+                'PostalCode'   => $postal,
+                'Country'      => $country,
+                'Phone'        => $phone,
+            ], 201);
+        }
+
+        jsonResponse(false, 'Method ไม่รองรับสำหรับ suppliers', [], 405);
     }
 
     // 3. Resource: stats
