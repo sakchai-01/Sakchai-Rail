@@ -432,7 +432,7 @@ declare(strict_types=1);
                 <div class="d-flex gap-2">
                   <button type="submit" class="btn btn-primary-custom flex-grow-1" id="saveProductBtn">
                     <i class="bi bi-plus-circle me-1" id="saveProductBtnIcon"></i>
-                    <span id="saveProductBtnText">บันทึกสินค้า</span>
+                    <span id="saveProductBtnText">เพิ่มสินค้า</span>
                   </button>
                   <button type="button" class="btn btn-outline-secondary d-none" id="cancelEditBtn" title="ยกเลิกการแก้ไข">
                     <i class="bi bi-x-circle me-1"></i>ยกเลิก
@@ -609,7 +609,7 @@ declare(strict_types=1);
                 </div>
                 <div class="d-flex gap-2">
                   <button type="submit" class="btn btn-primary-custom flex-grow-1" id="saveSupplierBtn">
-                    <i class="bi bi-plus-circle me-1" id="saveSupplierBtnIcon"></i> <span id="saveSupplierBtnText">บันทึกผู้จัดส่ง</span>
+                    <i class="bi bi-plus-circle me-1" id="saveSupplierBtnIcon"></i> <span id="saveSupplierBtnText">เพิ่มผู้จัดส่งรายใหม่</span>
                   </button>
                   <button type="button" class="btn btn-outline-secondary d-none" id="cancelSupEditBtn" onclick="resetSupplierForm()">ยกเลิก</button>
                   <button type="button" class="btn btn-light border text-muted" onclick="resetSupplierForm()"><i class="bi bi-arrow-counterclockwise"></i></button>
@@ -685,7 +685,7 @@ declare(strict_types=1);
                 </div>
                 <div class="d-flex gap-2">
                   <button type="submit" class="btn btn-primary-custom flex-grow-1" id="saveCategoryBtn">
-                    <i class="bi bi-plus-circle me-1" id="saveCategoryBtnIcon"></i> <span id="saveCategoryBtnText">บันทึกหมวดหมู่</span>
+                    <i class="bi bi-plus-circle me-1" id="saveCategoryBtnIcon"></i> <span id="saveCategoryBtnText">เพิ่มหมวดหมู่ใหม่</span>
                   </button>
                   <button type="button" class="btn btn-outline-secondary d-none" id="cancelCatEditBtn" onclick="resetCategoryForm()">ยกเลิก</button>
                   <button type="button" class="btn btn-light border text-muted" onclick="resetCategoryForm()"><i class="bi bi-arrow-counterclockwise"></i></button>
@@ -961,10 +961,10 @@ declare(strict_types=1);
       editingSupplierId = null;
       document.getElementById('supplierForm').reset();
       document.getElementById('SupplierID').value = '';
-      document.getElementById('supFormHeaderTitle').textContent = 'เพิ่มผู้จัดส่งใหม่';
+      document.getElementById('supFormHeaderTitle').textContent = 'เพิ่มผู้จัดส่งรายใหม่';
       document.getElementById('supFormModeBadge').textContent = 'Create Mode';
       document.getElementById('supFormModeBadge').className = 'badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 rounded-pill px-2 py-1';
-      document.getElementById('saveSupplierBtnText').textContent = 'บันทึกผู้จัดส่ง';
+      document.getElementById('saveSupplierBtnText').textContent = 'เพิ่มผู้จัดส่งรายใหม่';
       document.getElementById('cancelSupEditBtn').classList.add('d-none');
     }
     
@@ -995,11 +995,11 @@ declare(strict_types=1);
           method: method,
           body: JSON.stringify(payload)
         });
-        showToast(res.message || 'บันทึกข้อมูลผู้จัดส่งสำเร็จ', 'success');
+        showToast(res.message || 'อัพเดต/เพิ่ม ข้อมูลผู้จัดส่งสำเร็จ', 'success');
         resetSupplierForm();
         await loadMetadata();
       } catch (err) {
-        showToast('บันทึกไม่สำเร็จ: ' + err.message, 'danger');
+        showToast('อัพเดต/เพิ่ม ไม่สำเร็จ: ' + err.message, 'danger');
       }
     });
     
@@ -1062,7 +1062,7 @@ declare(strict_types=1);
       document.getElementById('catFormHeaderTitle').textContent = 'เพิ่มหมวดหมู่ใหม่';
       document.getElementById('catFormModeBadge').textContent = 'Create Mode';
       document.getElementById('catFormModeBadge').className = 'badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 rounded-pill px-2 py-1';
-      document.getElementById('saveCategoryBtnText').textContent = 'บันทึกหมวดหมู่';
+      document.getElementById('saveCategoryBtnText').textContent = 'เพิ่มหมวดหมู่ใหม่';
       document.getElementById('cancelCatEditBtn').classList.add('d-none');
     }
 
@@ -1088,11 +1088,11 @@ declare(strict_types=1);
           method: method,
           body: JSON.stringify(payload)
         });
-        showToast(res.message || 'บันทึกข้อมูลหมวดหมู่สำเร็จ', 'success');
+        showToast(res.message || 'อัพเดต/เพิ่ม ข้อมูลหมวดหมู่สำเร็จ', 'success');
         resetCategoryForm();
         await loadMetadata();
       } catch (err) {
-        showToast('บันทึกไม่สำเร็จ: ' + err.message, 'danger');
+        showToast('อัพเดต/เพิ่ม ไม่สำเร็จ: ' + err.message, 'danger');
       }
     });
 
@@ -1294,7 +1294,7 @@ declare(strict_types=1);
         await loadProducts();
       } catch (err) {
         console.error("Save Product Error:", err);
-        showToast('บันทึกข้อมูลล้มเหลว: ' + (err.message || err), 'danger');
+        showToast('อัพเดต/เพิ่ม ข้อมูลล้มเหลว: ' + (err.message || err), 'danger');
         
       } finally {
         // คืนค่าปุ่มให้กลับมาปกติทันที
