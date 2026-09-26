@@ -5,6 +5,9 @@ RUN a2dismod mpm_event mpm_worker 2>/dev/null || true \
     && rm -f /etc/apache2/mods-enabled/mpm_event.* /etc/apache2/mods-enabled/mpm_worker.* 2>/dev/null || true \
     && a2enmod mpm_prefork rewrite headers
 
+# ให้ Apache ส่งต่อตัวแปร Environment ทั้งหมดไปยัง PHP
+RUN echo "PassEnv DATABASE_URL MYSQL_URL MYSQL_PRIVATE_URL MYSQLHOST MYSQLPORT MYSQLUSER MYSQLPASSWORD MYSQLDATABASE DB_HOST DB_PORT DB_USER DB_PASS DB_NAME" > /etc/apache2/conf-enabled/railway-env.conf
+
 # ติดตั้ง extensions สำหรับ MySQL (PDO MySQL)
 RUN docker-php-ext-install pdo pdo_mysql
 
