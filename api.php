@@ -149,7 +149,7 @@ try {
     // 1. Resource: categories (GET / POST)
     if ($resource === 'categories') {
         if ($method === 'GET') {
-            $stmt = $pdo->query("SELECT {$cId} AS CategoryID, {$cName} AS CategoryName, {$cDesc} AS Description FROM {$cTable} ORDER BY {$cName} ASC");
+            $stmt = $pdo->query("SELECT {$cId} AS CategoryID, {$cName} AS CategoryName, {$cDesc} AS Description FROM {$cTable} ORDER BY {$cId} ASC");
             $rows = $stmt->fetchAll();
             jsonResponse(true, 'โหลดข้อมูลหมวดหมู่สินค้าสำเร็จ', $rows);
         }
@@ -208,7 +208,7 @@ try {
                 {$sCountry} AS Country, 
                 {$sPhone} AS Phone 
             FROM {$sTable} 
-            ORDER BY {$sName} ASC");
+            ORDER BY {$sId} ASC");
             $rows = $stmt->fetchAll();
             jsonResponse(true, 'โหลดข้อมูลผู้จัดส่งสำเร็จ', $rows);
         }
