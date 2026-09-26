@@ -32,8 +32,8 @@ USE `db_northwind`;
 DROP TABLE IF EXISTS `tb_categories`;
 CREATE TABLE `tb_categories` (
   `i_CategoryID` int(11) NOT NULL,
-  `c_CategoryName` varchar(255) NOT NULL,
-  `c_Description` text NOT NULL
+  `c_CategoryName` varchar(30) NOT NULL,
+  `c_Description` varchar(30) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
@@ -961,10 +961,10 @@ INSERT INTO `tb_orders` VALUES
 DROP TABLE IF EXISTS `tb_products`;
 CREATE TABLE `tb_products` (
   `i_ProductID` int(11) NOT NULL,
-  `c_ProductName` varchar(255) NOT NULL,
+  `c_ProductName` varchar(30) NOT NULL,
   `i_SupplierID` int(11) NOT NULL,
   `i_CategoryID` int(11) NOT NULL,
-  `c_Unit` varchar(150) NOT NULL,
+  `c_Unit` varchar(30) NOT NULL,
   `i_Price` float NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -1105,13 +1105,13 @@ INSERT INTO `tb_student` VALUES
 DROP TABLE IF EXISTS `tb_suppliers`;
 CREATE TABLE `tb_suppliers` (
   `i_SupplierID` int(11) NOT NULL,
-  `c_SupplierName` varchar(255) NOT NULL,
-  `c_ContactName` varchar(150) NOT NULL,
-  `c_Address` varchar(255) NOT NULL,
-  `c_City` varchar(100) NOT NULL,
-  `c_PostalCode` varchar(50) NOT NULL,
-  `c_Country` varchar(100) NOT NULL,
-  `c_Phone` varchar(50) NOT NULL
+  `c_SupplierName` varchar(30) NOT NULL,
+  `c_ContactName` varchar(30) NOT NULL,
+  `c_Address` varchar(30) NOT NULL,
+  `c_City` varchar(30) NOT NULL,
+  `c_PostalCode` varchar(30) NOT NULL,
+  `c_Country` varchar(30) NOT NULL,
+  `c_Phone` varchar(30) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
