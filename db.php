@@ -1,0 +1,267 @@
+<?php
+declare(strict_types=1);
+
+/**
+ * Database Connection & Schema Management for Northwind Application
+ * Compatible with Railway MySQL PaaS and Local Development (XAMPP / Docker / CLI)
+ */
+
+function getDbConfig(): array {
+    // 1. ตรวจสอบ Connection URL จาก Railway (DATABASE_URL, MYSQL_URL, MYSQL_PRIVATE_URL)
+    $dbUrl = getenv('DATABASE_URL') 
+          ?: getenv('MYSQL_URL') 
+          ?: getenv('MYSQL_PRIVATE_URL') 
+          ?: getenv('MYSQL_PUBLIC_URL')
+          ?: '';
+
+    if ($dbUrl !== '') {
+        $opts = parse_url($dbUrl);
+        $host = $opts['host'] ?? '127.0.0.1';
+        $port = (int)($opts['port'] ?? 3306);
+        $user = $opts['user'] ?? 'root';
+        $pass = $opts['pass'] ?? '';
+        $pathDb = isset($opts['path']) ? ltrim($opts['path'], '/') : '';
+        // หาก Railway มีชื่อฐานข้อมูลใน URL ให้ใช้ค่านั้น หรือใช้ DB_NAME / MYSQLDATABASE
+        $db = getenv('DB_NAME') ?: getenv('MYSQLDATABASE') ?: ($pathDb !== '' ? $pathDb : 'db_northwind');
+
+        return [
+            'host' => $host,
+            'port' => $port,
+            'user' => $user,
+            'pass' => $pass,
+            'db'   => $db,
+            'is_url' => true,
+        ];
+    }
+
+    // 2. กรณีแยกตัวแปรเดี่ยว (เช่น Local .env หรือ Railway Individual Variables)
+    $host = getenv('DB_HOST') ?: getenv('MYSQLHOST') ?: '127.0.0.1';
+    $port = (int)(getenv('DB_PORT') ?: getenv('MYSQLPORT') ?: 3306);
+    $user = getenv('DB_USER') ?: getenv('DB_USERNAME') ?: getenv('MYSQLUSER') ?: 'root';
+    $pass = getenv('DB_PASS') ?: getenv('DB_PASSWORD') ?: getenv('MYSQLPASSWORD') ?: '';
+    $db   = getenv('DB_NAME') ?: getenv('DB_DATABASE') ?: getenv('MYSQLDATABASE') ?: 'db_northwind';
+
+    return [
+        'host' => $host,
+        'port' => $port,
+        'user' => $user,
+        'pass' => $pass,
+        'db'   => $db,
+        'is_url' => false,
+    ];
+}
+
+function db(): PDO {
+    static $pdoInstance = null;
+    if ($pdoInstance !== null) {
+        return $pdoInstance;
+    }
+
+    $cfg = getDbConfig();
+    $options = [
+        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+        PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci",
+        PDO::ATTR_TIMEOUT => 5,
+    ];
+
+    $pdo = null;
+
+    // ลองเชื่อมต่อฐานข้อมูลตามชื่อที่ระบุ
+    try {
+        $dsn = "mysql:host={$cfg['host']};port={$cfg['port']};dbname={$cfg['db']};charset=utf8mb4";
+        $pdo = new PDO($dsn, $cfg['user'], $cfg['pass'], $options);
+    } catch (PDOException $e) {
+        // หากเกิดข้อผิดพลาดฐานข้อมูลไม่พบ (Unknown database) หรือ 1049
+        $isUnknownDb = str_contains($e->getMessage(), 'Unknown database') || $e->getCode() == 1049;
+
+        if ($isUnknownDb) {
+            // เชื่อมต่อไปที่ MySQL Server โดยไม่ระบุ dbname เพื่อสร้างฐานข้อมูล
+            $dsnNoDb = "mysql:host={$cfg['host']};port={$cfg['port']};charset=utf8mb4";
+            $pdoServer = new PDO($dsnNoDb, $cfg['user'], $cfg['pass'], $options);
+
+            try {
+                $targetDb = preg_replace('/[^a-zA-Z0-9_]/', '', $cfg['db']) ?: 'db_northwind';
+                $pdoServer->exec("CREATE DATABASE IF NOT EXISTS `{$targetDb}` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci");
+                $pdoServer->exec("USE `{$targetDb}`");
+                $pdo = $pdoServer;
+                $cfg['db'] = $targetDb;
+            } catch (Throwable $e2) {
+                // หากสร้าง db ไม่สำเร็จ ให้ fallback ใช้ 'railway' (ฐานข้อมูลตั้งต้นของ Railway)
+                try {
+                    $pdoServer->exec("USE `railway`");
+                    $pdo = $pdoServer;
+                    $cfg['db'] = 'railway';
+                } catch (Throwable $e3) {
+                    throw new RuntimeException("ไม่สามารถเชื่อมต่อหรือสร้างฐานข้อมูลได้: " . $e->getMessage(), (int)$e->getCode(), $e);
+                }
+            }
+        } else {
+            throw new RuntimeException("เชื่อมต่อฐานข้อมูลล้มเหลว ({$cfg['host']}:{$cfg['port']}): " . $e->getMessage(), (int)$e->getCode(), $e);
+        }
+    }
+
+    // ตรวจสอบและเตรียมโครงสร้างตาราง Northwind อัตโนมัติ (Auto-Initialization)
+    ensureNorthwindTables($pdo);
+
+    $pdoInstance = $pdo;
+    return $pdoInstance;
+}
+
+/**
+ * ตรวจสอบความพร้อมของตาราง Northwind
+ * หากยังไม่มีตาราง จะนำเข้าจาก dbNorthwind.sql โดยอัตโนมัติ
+ */
+function ensureNorthwindTables(PDO $pdo): void {
+    try {
+        $check = $pdo->query("SHOW TABLES LIKE 'tb_products'")->fetchColumn();
+        if ($check) {
+            // มีตารางแล้ว ตรวจสอบว่าต้องปรับขนาด VARCHAR ของชื่อสินค้าหรือไม่
+            try {
+                // ขยาย varchar ป้องกัน error กรณีชื่อสินค้ายาว
+                $pdo->exec("ALTER TABLE `tb_products` MODIFY COLUMN IF EXISTS `c_ProductName` VARCHAR(255) NOT NULL");
+            } catch (Throwable $ignore) {}
+            return;
+        }
+
+        // หากยังไม่มีตาราง ให้ตรวจสอบไฟล์ dbNorthwind.sql ในโฟลเดอร์เดียวกัน
+        $sqlPath = __DIR__ . '/dbNorthwind.sql';
+        if (file_exists($sqlPath)) {
+            importSqlDump($pdo, $sqlPath);
+            return;
+        }
+
+        // Fallback: หากหาไฟล์ไม่เจอ ให้สร้าง Schema พื้นฐานเพื่อไม่ให้ระบบพัง
+        createFallbackTables($pdo);
+    } catch (Throwable $e) {
+        error_log("Warning in ensureNorthwindTables: " . $e->getMessage());
+    }
+}
+
+/**
+ * รันไฟล์ SQL Dump อย่างปลอดภัย
+ */
+function importSqlDump(PDO $pdo, string $filePath): void {
+    $content = file_get_contents($filePath);
+    if ($content === false || trim($content) === '') return;
+
+    // ลบบรรทัด CREATE DATABASE / USE db_northwind เพื่อให้ทำงานกับ db ปัจจุบัน (เช่น railway หรือ db_northwind) ได้อย่างไร้รอยต่อ
+    $lines = explode("\n", $content);
+    $cleanLines = [];
+    foreach ($lines as $line) {
+        $trimmed = trim($line);
+        if (stripos($trimmed, 'CREATE DATABASE') === 0) continue;
+        if (stripos($trimmed, 'USE `') === 0 || stripos($trimmed, 'USE ') === 0) continue;
+        $cleanLines[] = $line;
+    }
+    $cleanSql = implode("\n", $cleanLines);
+
+    // ทำการรัน queries
+    $pdo->setAttribute(PDO::ATTR_EMULATE_PREPARES, 1);
+    try {
+        $pdo->exec($cleanSql);
+    } catch (Throwable $e) {
+        // หากรันก้อนใหญ่ไม่ผ่าน ให้แยกแบ่งตาม delimiter ;
+        runSqlChunked($pdo, $cleanSql);
+    }
+}
+
+function runSqlChunked(PDO $pdo, string $sql): void {
+    $statements = explode(";\n", $sql);
+    foreach ($statements as $stmt) {
+        $stmt = trim($stmt);
+        if ($stmt === '' || str_starts_with($stmt, '--') || str_starts_with($stmt, '/*')) {
+            continue;
+        }
+        try {
+            $pdo->exec($stmt);
+        } catch (Throwable $e) {
+            // ข้าม error ย่อย เช่น drop table if exists
+        }
+    }
+}
+
+/**
+ * Fallback Schema ในกรณีฉุกเฉิน
+ */
+function createFallbackTables(PDO $pdo): void {
+    $pdo->exec("CREATE TABLE IF NOT EXISTS `tb_categories` (
+        `i_CategoryID` int(11) NOT NULL PRIMARY KEY AUTO_INCREMENT,
+        `c_CategoryName` varchar(100) NOT NULL,
+        `c_Description` varchar(255) NULL
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+
+    $pdo->exec("CREATE TABLE IF NOT EXISTS `tb_suppliers` (
+        `i_SupplierID` int(11) NOT NULL PRIMARY KEY AUTO_INCREMENT,
+        `c_SupplierName` varchar(100) NOT NULL,
+        `c_ContactName` varchar(100) NULL,
+        `c_Address` varchar(150) NULL,
+        `c_City` varchar(50) NULL,
+        `c_PostalCode` varchar(20) NULL,
+        `c_Country` varchar(50) NULL,
+        `c_Phone` varchar(50) NULL
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+
+    $pdo->exec("CREATE TABLE IF NOT EXISTS `tb_products` (
+        `i_ProductID` int(11) NOT NULL PRIMARY KEY AUTO_INCREMENT,
+        `c_ProductName` varchar(255) NOT NULL,
+        `i_SupplierID` int(11) NULL,
+        `i_CategoryID` int(11) NULL,
+        `c_Unit` varchar(100) NOT NULL,
+        `i_Price` float NOT NULL DEFAULT 0
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+}
+
+/**
+ * ตรวจสอบและคืนค่า mapping ของคอลัมน์ในตาราง
+ * รองรับทั้งรูปแบบไฟล์อาจารย์ (i_ProductID, c_ProductName)
+ * และรูปแบบมาตรฐาน (ProductID, ProductName)
+ */
+function getNorthwindSchema(PDO $pdo): array {
+    static $schemaCache = null;
+    if ($schemaCache !== null) {
+        return $schemaCache;
+    }
+
+    $productCols = [];
+    try {
+        $stmt = $pdo->query("SHOW COLUMNS FROM `tb_products`");
+        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            $productCols[] = $row['Field'];
+        }
+    } catch (Throwable $e) {
+        $productCols = [];
+    }
+
+    $isPrefixed = in_array('i_ProductID', $productCols, true);
+
+    $schemaCache = [
+        'is_prefixed' => $isPrefixed,
+        'products' => [
+            'table'       => 'tb_products',
+            'id'          => $isPrefixed ? 'i_ProductID' : 'ProductID',
+            'name'        => $isPrefixed ? 'c_ProductName' : 'ProductName',
+            'supplier_id' => $isPrefixed ? 'i_SupplierID' : 'SupplierID',
+            'category_id' => $isPrefixed ? 'i_CategoryID' : 'CategoryID',
+            'unit'        => $isPrefixed ? 'c_Unit' : 'Unit',
+            'price'       => $isPrefixed ? 'i_Price' : 'Price',
+        ],
+        'categories' => [
+            'table' => 'tb_categories',
+            'id'    => $isPrefixed ? 'i_CategoryID' : 'CategoryID',
+            'name'  => $isPrefixed ? 'c_CategoryName' : 'CategoryName',
+        ],
+        'suppliers' => [
+            'table'   => 'tb_suppliers',
+            'id'      => $isPrefixed ? 'i_SupplierID' : 'SupplierID',
+            'name'    => $isPrefixed ? 'c_SupplierName' : 'SupplierName',
+            'contact' => $isPrefixed ? 'c_ContactName' : 'ContactName',
+            'address' => $isPrefixed ? 'c_Address' : 'Address',
+            'city'    => $isPrefixed ? 'c_City' : 'City',
+            'country' => $isPrefixed ? 'c_Country' : 'Country',
+            'phone'   => $isPrefixed ? 'c_Phone' : 'Phone',
+        ],
+    ];
+
+    return $schemaCache;
+}

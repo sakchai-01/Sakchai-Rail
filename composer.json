@@ -1,0 +1,10 @@
+{
+  "name": "northwind/crud-web-app",
+  "description": "Northwind Product Management CRUD Web App with PHP and MySQL on Railway PaaS",
+  "type": "project",
+  "require": {
+    "php": ">=8.1",
+    "ext-pdo": "*",
+    "ext-pdo_mysql": "*"
+  }
+}
