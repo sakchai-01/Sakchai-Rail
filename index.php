@@ -1355,7 +1355,13 @@ declare(strict_types=1);
       document.getElementById('formModeBadge').className = 'badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 rounded-pill px-2 py-1';
       document.getElementById('cancelEditBtn').classList.add('d-none');
 
+      // เพิ่มบรรทัดนี้ เพื่อบังคับให้ปุ่มปลดล็อคและเปลี่ยนข้อความเป็น "เพิ่มสินค้าใหม่" ทันที
+      const saveBtn = document.getElementById('saveProductBtn');
+      if (saveBtn) {
+        saveBtn.disabled = false;
+      }
       updateSaveBtnLabel();
+      
       applyPaginationAndRender();
     }
 
