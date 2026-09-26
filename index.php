@@ -20,7 +20,6 @@ declare(strict_types=1);
 
   <style>
     :root {
-      /* ปรับเป็นโทนสีเขียว Modern Emerald / Forest */
       --primary-color: #10b981;      /* สีเขียวหลัก (Emerald) */
       --primary-hover: #059669;      /* สีเขียวเข้มเมื่อ Hover */
       --primary-light: #ecfdf5;      /* สีเขียวอ่อนสำหรับ Background / Highlight */
@@ -248,7 +247,7 @@ declare(strict_types=1);
   <!-- Floating Toast Notifications Container -->
   <div id="toastContainer" class="toast-container-custom"></div>
 
- <!-- Top Navbar -->
+  <!-- Top Navbar -->
   <header class="top-navbar py-2 px-3 px-lg-4 mb-4">
     <div class="container-fluid d-flex flex-wrap justify-content-between align-items-center gap-2">
       <div class="d-flex align-items-center gap-3">
@@ -274,7 +273,7 @@ declare(strict_types=1);
       </div>
     </div>
   </header>
-  
+
   <!-- Main Workspace -->
   <main class="container-fluid px-4 mb-5">
 
@@ -315,7 +314,6 @@ declare(strict_types=1);
           </div>
         </div>
       </div>
-      
     </section>
 
     <!-- Main Navigation Pills -->
@@ -442,7 +440,7 @@ declare(strict_types=1);
                   <button type="button" class="btn btn-light border text-muted" id="clearFormBtn" title="ล้างฟอร์ม">
                     <i class="bi bi-arrow-counterclockwise"></i>
                   </button>
-              </div>
+                </div>
               </form>
             </div>
           </div>
@@ -471,12 +469,12 @@ declare(strict_types=1);
 
                 <div class="col-6 col-md-2">
                   <select class="form-select" id="sortBy" title="เรียงลำดับข้อมูล">
-                      <option value="id_desc" selected>ID ล่าสุด</option>
-                      <option value="id_asc">ID เก่าสุด</option>
-                      <option value="name_asc">ชื่อ A-Z</option>
-                      <option value="name_desc">ชื่อ Z-A</option>
-                      <option value="price_asc">ราคา ต่ำ-สูง</option>
-                      <option value="price_desc">ราคา สูง-ต่ำ</option>
+                    <option value="id_desc" selected>ID ล่าสุด</option>
+                    <option value="id_asc">ID เก่าสุด</option>
+                    <option value="name_asc">ชื่อ A-Z</option>
+                    <option value="name_desc">ชื่อ Z-A</option>
+                    <option value="price_asc">ราคา ต่ำ-สูง</option>
+                    <option value="price_desc">ราคา สูง-ต่ำ</option>
                   </select>
                 </div>
 
@@ -547,169 +545,170 @@ declare(strict_types=1);
       </div>
 
       <!-- ================= Tab 2: Suppliers Directory ================= -->
-<div class="tab-pane fade" id="tabSuppliers" role="tabpanel">
-  <div class="row g-4">
-    <!-- Left Column: Supplier Form (Create / Edit) -->
-    <div class="col-12 col-xl-4">
-      <div class="content-card p-4 sticky-top" style="top: 85px;">
-        <div class="d-flex justify-content-between align-items-center mb-3 pb-2 border-bottom">
-          <div class="d-flex align-items-center gap-2">
-            <div class="stat-icon bg-warning bg-opacity-10 text-warning" style="width: 38px; height: 38px; font-size: 1.1rem;">
-              <i class="bi bi-truck" id="supFormHeaderIcon"></i>
-            </div>
-            <div>
-              <h2 class="h6 fw-bold mb-0" id="supFormHeaderTitle">เพิ่มผู้จัดส่งใหม่</h2>
-              <span class="text-muted" style="font-size: 0.78rem;">จัดการข้อมูล Supplier ผ่าน API</span>
-            </div>
-          </div>
-          <span id="supFormModeBadge" class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 rounded-pill px-2 py-1">Create Mode</span>
-        </div>
+      <div class="tab-pane fade" id="tabSuppliers" role="tabpanel">
+        <div class="row g-4">
+          <!-- Left Column: Supplier Form (Create / Edit) -->
+          <div class="col-12 col-xl-4">
+            <div class="content-card p-4 sticky-top" style="top: 85px;">
+              <div class="d-flex justify-content-between align-items-center mb-3 pb-2 border-bottom">
+                <div class="d-flex align-items-center gap-2">
+                  <div class="stat-icon bg-warning bg-opacity-10 text-warning" style="width: 38px; height: 38px; font-size: 1.1rem;">
+                    <i class="bi bi-truck" id="supFormHeaderIcon"></i>
+                  </div>
+                  <div>
+                    <h2 class="h6 fw-bold mb-0" id="supFormHeaderTitle">เพิ่มผู้จัดส่งใหม่</h2>
+                    <span class="text-muted" style="font-size: 0.78rem;">จัดการข้อมูล Supplier ผ่าน API</span>
+                  </div>
+                </div>
+                <span id="supFormModeBadge" class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 rounded-pill px-2 py-1">Create Mode</span>
+              </div>
 
-        <form id="supplierForm" novalidate>
-          <input type="hidden" id="SupplierID" value="">
-          <div class="mb-3">
-            <label class="form-label" for="SupplierName">ชื่อบริษัท / ผู้จัดส่ง <span class="text-danger">*</span></label>
-            <div class="input-group">
-              <span class="input-group-text"><i class="bi bi-building"></i></span>
-              <input type="text" class="form-control" id="SupplierName" placeholder="เช่น ABC Logistics, Siam Foods" maxlength="100" required>
+              <form id="supplierForm" novalidate>
+                <input type="hidden" id="SupplierID" value="">
+                <div class="mb-3">
+                  <label class="form-label" for="SupplierName">ชื่อบริษัท / ผู้จัดส่ง <span class="text-danger">*</span></label>
+                  <div class="input-group">
+                    <span class="input-group-text"><i class="bi bi-building"></i></span>
+                    <input type="text" class="form-control" id="SupplierName" placeholder="เช่น ABC Logistics, Siam Foods" maxlength="100" required>
+                  </div>
+                  <div class="invalid-feedback">กรุณาระบุชื่อผู้จัดส่งสินค้า</div>
+                </div>
+                <div class="mb-3">
+                  <label class="form-label" for="ContactName">ชื่อผู้ติดต่อ</label>
+                  <div class="input-group">
+                    <span class="input-group-text"><i class="bi bi-person"></i></span>
+                    <input type="text" class="form-control" id="ContactName" placeholder="เช่น สมชาย ใจดี" maxlength="100">
+                  </div>
+                </div>
+                <div class="mb-3">
+                  <label class="form-label" for="SupplierAddress">ที่อยู่</label>
+                  <div class="input-group">
+                    <span class="input-group-text"><i class="bi bi-geo-alt"></i></span>
+                    <input type="text" class="form-control" id="SupplierAddress" placeholder="เช่น 123 ถ.สุขุมวิท" maxlength="150">
+                  </div>
+                </div>
+                <div class="row g-2 mb-3">
+                  <div class="col-7">
+                    <label class="form-label" for="SupplierCity">เมือง / จังหวัด</label>
+                    <input type="text" class="form-control" id="SupplierCity" placeholder="เช่น Bangkok" maxlength="50">
+                  </div>
+                  <div class="col-5">
+                    <label class="form-label" for="SupplierPostalCode">รหัสไปรษณีย์</label>
+                    <input type="text" class="form-control" id="SupplierPostalCode" placeholder="เช่น 10110" maxlength="20">
+                  </div>
+                </div>
+                <div class="row g-2 mb-4">
+                  <div class="col-6">
+                    <label class="form-label" for="SupplierCountry">ประเทศ</label>
+                    <input type="text" class="form-control" id="SupplierCountry" placeholder="เช่น Thailand" maxlength="50">
+                  </div>
+                  <div class="col-6">
+                    <label class="form-label" for="SupplierPhone">เบอร์โทรศัพท์</label>
+                    <input type="text" class="form-control" id="SupplierPhone" placeholder="เช่น 02-123-4567" maxlength="50">
+                  </div>
+                </div>
+                <div class="d-flex gap-2">
+                  <button type="submit" class="btn btn-primary-custom flex-grow-1" id="saveSupplierBtn">
+                    <i class="bi bi-plus-circle me-1" id="saveSupplierBtnIcon"></i> <span id="saveSupplierBtnText">บันทึกผู้จัดส่ง</span>
+                  </button>
+                  <button type="button" class="btn btn-outline-secondary d-none" id="cancelSupEditBtn" onclick="resetSupplierForm()">ยกเลิก</button>
+                  <button type="button" class="btn btn-light border text-muted" onclick="resetSupplierForm()"><i class="bi bi-arrow-counterclockwise"></i></button>
+                </div>
+              </form>
             </div>
-            <div class="invalid-feedback">กรุณาระบุชื่อผู้จัดส่งสินค้า</div>
           </div>
-          <div class="mb-3">
-            <label class="form-label" for="ContactName">ชื่อผู้ติดต่อ</label>
-            <div class="input-group">
-              <span class="input-group-text"><i class="bi bi-person"></i></span>
-              <input type="text" class="form-control" id="ContactName" placeholder="เช่น สมชาย ใจดี" maxlength="100">
-            </div>
-          </div>
-          <div class="mb-3">
-            <label class="form-label" for="SupplierAddress">ที่อยู่</label>
-            <div class="input-group">
-              <span class="input-group-text"><i class="bi bi-geo-alt"></i></span>
-              <input type="text" class="form-control" id="SupplierAddress" placeholder="เช่น 123 ถ.สุขุมวิท" maxlength="150">
-            </div>
-          </div>
-          <div class="row g-2 mb-3">
-            <div class="col-7">
-              <label class="form-label" for="SupplierCity">เมือง / จังหวัด</label>
-              <input type="text" class="form-control" id="SupplierCity" placeholder="เช่น Bangkok" maxlength="50">
-            </div>
-            <div class="col-5">
-              <label class="form-label" for="SupplierPostalCode">รหัสไปรษณีย์</label>
-              <input type="text" class="form-control" id="SupplierPostalCode" placeholder="เช่น 10110" maxlength="20">
-            </div>
-          </div>
-          <div class="row g-2 mb-4">
-            <div class="col-6">
-              <label class="form-label" for="SupplierCountry">ประเทศ</label>
-              <input type="text" class="form-control" id="SupplierCountry" placeholder="เช่น Thailand" maxlength="50">
-            </div>
-            <div class="col-6">
-              <label class="form-label" for="SupplierPhone">เบอร์โทรศัพท์</label>
-              <input type="text" class="form-control" id="SupplierPhone" placeholder="เช่น 02-123-4567" maxlength="50">
-            </div>
-          </div>
-          <div class="d-flex gap-2">
-            <button type="submit" class="btn btn-primary-custom flex-grow-1" id="saveSupplierBtn">
-              <i class="bi bi-plus-circle me-1" id="saveSupplierBtnIcon"></i> <span id="saveSupplierBtnText">บันทึกผู้จัดส่ง</span>
-            </button>
-            <button type="button" class="btn btn-outline-secondary d-none" id="cancelSupEditBtn" onclick="resetSupplierForm()">ยกเลิก</button>
-            <button type="button" class="btn btn-light border text-muted" onclick="resetSupplierForm()"><i class="bi bi-arrow-counterclockwise"></i></button>
-          </div>
-        </form>
-      </div>
-    </div>
 
-    <!-- Right Column: Table -->
-    <div class="col-12 col-xl-8">
-      <div class="content-card p-4">
-        <div class="d-flex justify-content-between align-items-center mb-3">
-          <h2 class="h5 fw-bold mb-0">รายชื่อผู้จัดส่งสินค้า (Suppliers)</h2>
-          <div class="input-group" style="max-width: 260px;">
-            <span class="input-group-text bg-white"><i class="bi bi-search text-muted"></i></span>
-            <input type="text" class="form-control border-start-0" id="supplierSearchInput" placeholder="ค้นหาผู้จัดส่ง...">
+          <!-- Right Column: Table -->
+          <div class="col-12 col-xl-8">
+            <div class="content-card p-4">
+              <div class="d-flex justify-content-between align-items-center mb-3">
+                <h2 class="h5 fw-bold mb-0">รายชื่อผู้จัดส่งสินค้า (Suppliers)</h2>
+                <div class="input-group" style="max-width: 260px;">
+                  <span class="input-group-text bg-white"><i class="bi bi-search text-muted"></i></span>
+                  <input type="text" class="form-control border-start-0" id="supplierSearchInput" placeholder="ค้นหาผู้จัดส่ง...">
+                </div>
+              </div>
+              <div class="table-responsive table-container">
+                <table class="table align-middle mb-0">
+                  <thead>
+                    <tr>
+                      <th style="width: 70px;">ID</th>
+                      <th>ชื่อผู้จัดส่ง (Company)</th>
+                      <th>ผู้ติดต่อ</th>
+                      <th>เมือง/ประเทศ</th>
+                      <th>เบอร์โทร</th>
+                      <th class="text-center" style="width: 100px;">การจัดการ</th>
+                    </tr>
+                  </thead>
+                  <tbody id="supplierTableBody">
+                    <tr><td colspan="6" class="text-center py-4 text-muted">กำลังโหลดข้อมูลผู้จัดส่ง...</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
           </div>
         </div>
-        <div class="table-responsive table-container">
-          <table class="table align-middle mb-0">
-            <thead>
-              <tr>
-                <th style="width: 70px;">ID</th>
-                <th>ชื่อผู้จัดส่ง (Company)</th>
-                <th>ผู้ติดต่อ</th>
-                <th>เมือง/ประเทศ</th>
-                <th>เบอร์โทร</th>
-                <th class="text-center" style="width: 100px;">การจัดการ</th>
-              </tr>
-            </thead>
-            <tbody id="supplierTableBody">
-              <tr><td colspan="6" class="text-center py-4 text-muted">กำลังโหลดข้อมูลผู้จัดส่ง...</td></tr>
-            </tbody>
-          </table>
-        </div>
       </div>
-    </div>
-  </div>
-</div>
       
       <!-- ================= Tab 3: Categories Directory ================= -->
-<div class="tab-pane fade" id="tabCategories" role="tabpanel">
-  <div class="row g-4">
-    <!-- Left Column: Category Form -->
-    <div class="col-12 col-xl-4">
-      <div class="content-card p-4 sticky-top" style="top: 85px;">
-        <div class="d-flex justify-content-between align-items-center mb-3 pb-2 border-bottom">
-          <div class="d-flex align-items-center gap-2">
-            <div class="stat-icon bg-info bg-opacity-10 text-info" style="width: 38px; height: 38px; font-size: 1.1rem;">
-              <i class="bi bi-tag" id="catFormHeaderIcon"></i>
-            </div>
-            <div>
-              <h2 class="h6 fw-bold mb-0" id="catFormHeaderTitle">เพิ่มหมวดหมู่ใหม่</h2>
-              <span class="text-muted" style="font-size: 0.78rem;">จัดการข้อมูล Category ผ่าน API</span>
-            </div>
-          </div>
-          <span id="catFormModeBadge" class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 rounded-pill px-2 py-1">Create Mode</span>
-        </div>
+      <div class="tab-pane fade" id="tabCategories" role="tabpanel">
+        <div class="row g-4">
+          <!-- Left Column: Category Form -->
+          <div class="col-12 col-xl-4">
+            <div class="content-card p-4 sticky-top" style="top: 85px;">
+              <div class="d-flex justify-content-between align-items-center mb-3 pb-2 border-bottom">
+                <div class="d-flex align-items-center gap-2">
+                  <div class="stat-icon bg-info bg-opacity-10 text-info" style="width: 38px; height: 38px; font-size: 1.1rem;">
+                    <i class="bi bi-tag" id="catFormHeaderIcon"></i>
+                  </div>
+                  <div>
+                    <h2 class="h6 fw-bold mb-0" id="catFormHeaderTitle">เพิ่มหมวดหมู่ใหม่</h2>
+                    <span class="text-muted" style="font-size: 0.78rem;">จัดการข้อมูล Category ผ่าน API</span>
+                  </div>
+                </div>
+                <span id="catFormModeBadge" class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 rounded-pill px-2 py-1">Create Mode</span>
+              </div>
 
-        <form id="categoryForm" novalidate>
-          <input type="hidden" id="CategoryID" value="">
-          <div class="mb-3">
-            <label class="form-label" for="CategoryName">ชื่อหมวดหมู่สินค้า <span class="text-danger">*</span></label>
-            <div class="input-group">
-              <span class="input-group-text"><i class="bi bi-tag"></i></span>
-              <input type="text" class="form-control" id="CategoryName" placeholder="เช่น Beverages, Condiments" maxlength="100" required>
+              <form id="categoryForm" novalidate>
+                <input type="hidden" id="CategoryID" value="">
+                <div class="mb-3">
+                  <label class="form-label" for="CategoryName">ชื่อหมวดหมู่สินค้า <span class="text-danger">*</span></label>
+                  <div class="input-group">
+                    <span class="input-group-text"><i class="bi bi-tag"></i></span>
+                    <input type="text" class="form-control" id="CategoryName" placeholder="เช่น Beverages, Condiments" maxlength="100" required>
+                  </div>
+                  <div class="invalid-feedback">กรุณาระบุชื่อหมวดหมู่สินค้า</div>
+                </div>
+                <div class="mb-4">
+                  <label class="form-label" for="CategoryDesc">คำอธิบายหมวดหมู่</label>
+                  <textarea class="form-control" id="CategoryDesc" rows="3" placeholder="ระบุรายละเอียดเพิ่มเติม..." maxlength="255"></textarea>
+                </div>
+                <div class="d-flex gap-2">
+                  <button type="submit" class="btn btn-primary-custom flex-grow-1" id="saveCategoryBtn">
+                    <i class="bi bi-plus-circle me-1" id="saveCategoryBtnIcon"></i> <span id="saveCategoryBtnText">บันทึกหมวดหมู่</span>
+                  </button>
+                  <button type="button" class="btn btn-outline-secondary d-none" id="cancelCatEditBtn" onclick="resetCategoryForm()">ยกเลิก</button>
+                  <button type="button" class="btn btn-light border text-muted" onclick="resetCategoryForm()"><i class="bi bi-arrow-counterclockwise"></i></button>
+                </div>
+              </form>
             </div>
-            <div class="invalid-feedback">กรุณาระบุชื่อหมวดหมู่สินค้า</div>
           </div>
-          <div class="mb-4">
-            <label class="form-label" for="CategoryDesc">คำอธิบายหมวดหมู่</label>
-            <textarea class="form-control" id="CategoryDesc" rows="3" placeholder="ระบุรายละเอียดเพิ่มเติม..." maxlength="255"></textarea>
+
+          <!-- Right Column: Grid List -->
+          <div class="col-12 col-xl-8">
+            <div class="content-card p-4">
+              <div class="d-flex justify-content-between align-items-center mb-3">
+                <h2 class="h5 fw-bold mb-0">หมวดหมู่สินค้าทั้งหมด (Categories)</h2>
+              </div>
+              <div class="row g-3" id="categoriesCardContainer">
+                <div class="col-12 text-center py-4 text-muted">กำลังโหลดข้อมูลหมวดหมู่...</div>
+              </div>
+            </div>
           </div>
-          <div class="d-flex gap-2">
-            <button type="submit" class="btn btn-primary-custom flex-grow-1" id="saveCategoryBtn">
-              <i class="bi bi-plus-circle me-1" id="saveCategoryBtnIcon"></i> <span id="saveCategoryBtnText">บันทึกหมวดหมู่</span>
-            </button>
-            <button type="button" class="btn btn-outline-secondary d-none" id="cancelCatEditBtn" onclick="resetCategoryForm()">ยกเลิก</button>
-            <button type="button" class="btn btn-light border text-muted" onclick="resetCategoryForm()"><i class="bi bi-arrow-counterclockwise"></i></button>
-          </div>
-        </form>
+        </div>
       </div>
-    </div>
 
-    <!-- Right Column: Grid List -->
-    <div class="col-12 col-xl-8">
-      <div class="content-card p-4">
-        <div class="d-flex justify-content-between align-items-center mb-3">
-          <h2 class="h5 fw-bold mb-0">หมวดหมู่สินค้าทั้งหมด (Categories)</h2>
-        </div>
-        <div class="row g-3" id="categoriesCardContainer">
-          <div class="col-12 text-center py-4 text-muted">กำลังโหลดข้อมูลหมวดหมู่...</div>
-        </div>
-      </div>
     </div>
-  </div>
-</div>
-
   </main>
 
   <!-- Footer -->
@@ -792,15 +791,12 @@ declare(strict_types=1);
     let currentPage = 1;
     let itemsPerPage = 25;
 
-    // --- ตัวแปรควบคุมโหมดแก้ไข ---
     let editingSupplierId = null;
     let editingCategoryId = null;
 
-    // Bootstrap Modal instances
     const deleteModal = new bootstrap.Modal(document.getElementById('deleteModal'));
     const healthModal = new bootstrap.Modal(document.getElementById('healthModal'));
 
-    // --- Toast Notification System ---
     function showToast(message, type = 'success') {
       const container = document.getElementById('toastContainer');
       const toastId = 'toast_' + Date.now();
@@ -845,7 +841,6 @@ declare(strict_types=1);
       }[char]));
     }
 
-    // --- API Request Wrapper ---
     async function apiRequest(url, options = {}) {
       try {
         const response = await fetch(url, {
@@ -874,7 +869,6 @@ declare(strict_types=1);
       }
     }
 
-    // --- Load Metadata (Categories & Suppliers & Stats) ---
     async function loadMetadata() {
       try {
         const [catsRes, supsRes, statsRes] = await Promise.all([
@@ -886,20 +880,13 @@ declare(strict_types=1);
         categoriesList = catsRes.data || [];
         suppliersList  = supsRes.data || [];
 
-        // 1. Populate Form Dropdowns
         populateSelect('CategoryID', categoriesList, 'CategoryID', 'CategoryName', '-- เลือกหมวดหมู่สินค้า --');
         populateSelect('SupplierID', suppliersList, 'SupplierID', 'SupplierName', '-- เลือกผู้จัดส่งสินค้า --');
-
-        // 2. Populate Filter Dropdown
         populateSelect('filterCategory', categoriesList, 'CategoryID', 'CategoryName', 'ทุกหมวดหมู่ (All)');
 
-        // 3. Render Suppliers Tab Table
         renderSuppliersTab(suppliersList);
-
-        // 4. Render Categories Tab Grid
         renderCategoriesTab(categoriesList);
 
-        // 5. Update KPI Stats
         if (statsRes.data) {
           const elTotalProd = document.getElementById('statTotalProducts');
           if (elTotalProd) elTotalProd.textContent = (statsRes.data.total_products ?? 0).toLocaleString();
@@ -927,7 +914,6 @@ declare(strict_types=1);
       select.innerHTML = html;
     }
 
-    // --- 1. จัดการ Suppliers (CRUD) ---
     function renderSuppliersTab(items) {
       const tbody = document.getElementById('supplierTableBody');
       if (!items || items.length === 0) {
@@ -1031,7 +1017,6 @@ declare(strict_types=1);
       }
     }
 
-    // --- 2. จัดการ Categories (CRUD) ---
     function renderCategoriesTab(items) {
       const container = document.getElementById('categoriesCardContainer');
       if (!items || items.length === 0) {
@@ -1125,7 +1110,6 @@ declare(strict_types=1);
       }
     }
 
-    // --- Load Products Data ---
     async function loadProducts() {
       const tbody = document.getElementById('productTableBody');
       tbody.innerHTML = `<tr><td colspan="7" class="text-center py-5 text-muted"><div class="spinner-border spinner-border-sm text-primary me-2"></div>กำลังโหลดข้อมูลสินค้า...</td></tr>`;
@@ -1151,7 +1135,6 @@ declare(strict_types=1);
       }
     }
 
-    // --- Client-side Pagination & Rendering ---
     function applyPaginationAndRender() {
       const total = allProducts.length;
       document.getElementById('displayTotal').textContent = total.toLocaleString();
@@ -1237,13 +1220,10 @@ declare(strict_types=1);
       window.scrollTo({ top: 200, behavior: 'smooth' });
     }
 
-    // --- Form Operations (Create & Update) ---
     const form = document.getElementById('productForm');
 
     form.addEventListener('submit', async function(e) {
       e.preventDefault();
-
-      // Reset validation states
       clearValidationErrors();
 
       const nameVal = document.getElementById('ProductName').value.trim();
@@ -1254,7 +1234,6 @@ declare(strict_types=1);
 
       let hasError = false;
 
-      // Validation Rules
       if (!nameVal) {
         setFieldError('ProductName', 'กรุณาระบุชื่อสินค้า');
         hasError = true;
@@ -1281,7 +1260,6 @@ declare(strict_types=1);
         return;
       }
 
-      // Payload
       const payload = {
         ProductName: nameVal,
         SupplierID: supVal ? Number(supVal) : null,
@@ -1296,7 +1274,6 @@ declare(strict_types=1);
 
       try {
         if (editingProductId) {
-          // PUT request
           payload.ProductID = editingProductId;
           const res = await apiRequest(`${API_BASE}?resource=products`, {
             method: 'PUT',
@@ -1304,7 +1281,6 @@ declare(strict_types=1);
           });
           showToast(res.message || 'แก้ไขข้อมูลสินค้าเรียบร้อยแล้ว', 'success');
         } else {
-          // POST request
           const res = await apiRequest(`${API_BASE}?resource=products`, {
             method: 'POST',
             body: JSON.stringify(payload)
@@ -1352,7 +1328,6 @@ declare(strict_types=1);
 
       clearValidationErrors();
 
-      // UI updates for edit mode
       document.getElementById('formHeaderTitle').textContent = `แก้ไขสินค้า #${editingProductId}`;
       document.getElementById('formHeaderSubtitle').textContent = 'กำลังแก้ไขข้อมูลสินค้าเดิมในฐานข้อมูล';
       document.getElementById('formHeaderIcon').className = 'bi bi-pencil-fill text-primary';
@@ -1362,11 +1337,8 @@ declare(strict_types=1);
 
       updateSaveBtnLabel();
 
-      // Switch to products tab if not on it
       document.getElementById('tabBtnProducts').click();
       window.scrollTo({ top: 120, behavior: 'smooth' });
-
-      // Highlight row
       applyPaginationAndRender();
     }
 
@@ -1390,12 +1362,14 @@ declare(strict_types=1);
     function updateSaveBtnLabel() {
       const btnText = document.getElementById('saveProductBtnText');
       const btnIcon = document.getElementById('saveProductBtnIcon');
+      if (!btnText) return;
+      
       if (editingProductId) {
         btnText.textContent = 'บันทึกการแก้ไข';
-        btnIcon.className = 'bi bi-check2-circle me-1';
+        if (btnIcon) btnIcon.className = 'bi bi-check2-circle me-1';
       } else {
         btnText.textContent = 'เพิ่มสินค้าใหม่';
-        btnIcon.className = 'bi bi-plus-circle me-1';
+        if (btnIcon) btnIcon.className = 'bi bi-plus-circle me-1';
       }
     }
 
@@ -1406,7 +1380,6 @@ declare(strict_types=1);
       input.focus();
     }
 
-    // --- Delete Operations ---
     function askDeleteProduct(id, name) {
       pendingDeleteId = Number(id);
       document.getElementById('deleteModalId').textContent = '#' + id;
@@ -1449,7 +1422,6 @@ declare(strict_types=1);
       }
     });
 
-    // --- Health Check Diagnostics ---
     async function checkHealth() {
       const modalContent = document.getElementById('healthModalContent');
       modalContent.textContent = 'กำลังส่งคำขอตรวจสอบไปยัง /health.php ...';
@@ -1483,7 +1455,6 @@ declare(strict_types=1);
       }
     }
 
-    // --- Search & Filters Event Listeners ---
     let searchDebounceTimeout = null;
     document.getElementById('searchInput').addEventListener('input', function() {
       clearTimeout(searchDebounceTimeout);
@@ -1530,7 +1501,6 @@ declare(strict_types=1);
     document.getElementById('clearFormBtn').addEventListener('click', resetForm);
     document.getElementById('openHealthBtn').addEventListener('click', checkHealth);
 
-    // Filter suppliers in tab 2
     document.getElementById('supplierSearchInput').addEventListener('input', function() {
       const q = this.value.toLowerCase().trim();
       const filtered = suppliersList.filter(s => 
@@ -1541,7 +1511,6 @@ declare(strict_types=1);
       renderSuppliersTab(filtered);
     });
 
-    // --- Initialization on page load ---
     document.addEventListener('DOMContentLoaded', async () => {
       await loadMetadata();
       await loadProducts();
