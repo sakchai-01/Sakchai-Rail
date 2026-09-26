@@ -140,11 +140,7 @@ function ensureNorthwindTables(PDO $pdo): void {
     try {
         $check = $pdo->query("SHOW TABLES LIKE 'tb_products'")->fetchColumn();
         if ($check) {
-            // มีตารางแล้ว ตรวจสอบว่าต้องปรับขนาด VARCHAR ของชื่อสินค้าหรือไม่
-            try {
-                // ขยาย varchar ป้องกัน error กรณีชื่อสินค้ายาว
-                $pdo->exec("ALTER TABLE `tb_products` MODIFY COLUMN IF EXISTS `c_ProductName` VARCHAR(255) NOT NULL");
-            } catch (Throwable $ignore) {}
+            upgradeNorthwindColumns($pdo);
             return;
         }
 
@@ -152,6 +148,7 @@ function ensureNorthwindTables(PDO $pdo): void {
         $sqlPath = __DIR__ . '/dbNorthwind.sql';
         if (file_exists($sqlPath)) {
             importSqlDump($pdo, $sqlPath);
+            upgradeNorthwindColumns($pdo);
             return;
         }
 
@@ -161,6 +158,60 @@ function ensureNorthwindTables(PDO $pdo): void {
         error_log("Warning in ensureNorthwindTables: " . $e->getMessage());
     }
 }
+
+/**
+ * ปรับปรุงขนาดคอลัมน์ในตารางให้รองรับข้อมูลจริง
+ * ป้องกันข้อผิดพลาด SQLSTATE[22001]: 1406 Data too long for column
+ */
+function upgradeNorthwindColumns(PDO $pdo): void {
+    static $upgraded = false;
+    if ($upgraded) return;
+
+    try {
+        // 1. ตาราง tb_suppliers
+        $colSup = $pdo->query("SHOW COLUMNS FROM `tb_suppliers` LIKE 'c_SupplierName'")->fetch(PDO::FETCH_ASSOC);
+        if ($colSup && stripos($colSup['Type'], 'varchar(30)') !== false) {
+            $pdo->exec("ALTER TABLE `tb_suppliers` 
+                MODIFY `c_SupplierName` VARCHAR(255) NOT NULL,
+                MODIFY `c_ContactName` VARCHAR(150) NULL,
+                MODIFY `c_Address` VARCHAR(255) NULL,
+                MODIFY `c_City` VARCHAR(100) NULL,
+                MODIFY `c_PostalCode` VARCHAR(50) NULL,
+                MODIFY `c_Country` VARCHAR(100) NULL,
+                MODIFY `c_Phone` VARCHAR(50) NULL");
+        }
+
+        // 2. ตาราง tb_categories
+        $colCat = $pdo->query("SHOW COLUMNS FROM `tb_categories` LIKE 'c_CategoryName'")->fetch(PDO::FETCH_ASSOC);
+        if ($colCat && stripos($colCat['Type'], 'varchar(30)') !== false) {
+            $pdo->exec("ALTER TABLE `tb_categories` 
+                MODIFY `c_CategoryName` VARCHAR(255) NOT NULL,
+                MODIFY `c_Description` TEXT NULL");
+        }
+
+        // 3. ตาราง tb_products
+        $colProd = $pdo->query("SHOW COLUMNS FROM `tb_products` LIKE 'c_ProductName'")->fetch(PDO::FETCH_ASSOC);
+        if ($colProd && stripos($colProd['Type'], 'varchar(30)') !== false) {
+            $pdo->exec("ALTER TABLE `tb_products` 
+                MODIFY `c_ProductName` VARCHAR(255) NOT NULL,
+                MODIFY `c_Unit` VARCHAR(150) NULL");
+        }
+
+        // 4. กรณีตาราง Suppliers / Categories / Products แบบมาตรฐาน
+        $colStdSup = $pdo->query("SHOW COLUMNS FROM `Suppliers` LIKE 'SupplierName'")->fetch(PDO::FETCH_ASSOC);
+        if ($colStdSup && stripos($colStdSup['Type'], 'varchar(30)') !== false) {
+            $pdo->exec("ALTER TABLE `Suppliers` 
+                MODIFY `SupplierName` VARCHAR(255) NOT NULL,
+                MODIFY `ContactName` VARCHAR(150) NULL,
+                MODIFY `Address` VARCHAR(255) NULL");
+        }
+
+        $upgraded = true;
+    } catch (Throwable $e) {
+        error_log("Notice in upgradeNorthwindColumns: " . $e->getMessage());
+    }
+}
+
 
 /**
  * รันไฟล์ SQL Dump อย่างปลอดภัย
