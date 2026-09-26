@@ -278,7 +278,7 @@ declare(strict_types=1);
   <!-- Main Workspace -->
   <main class="container-fluid px-3 px-lg-4 mb-5" style="max-width: 1560px;">
 
-    <!-- Dashboard Stat Cards -->
+    <!-- Dashboard Stat Cards (3 Cards) -->
     <section class="row g-3 mb-4" id="statsSection">
       <div class="col-12 col-md-4">
         <div class="stat-card d-flex align-items-center gap-3">
@@ -313,7 +313,6 @@ declare(strict_types=1);
           </div>
         </div>
       </div>
-      
     </section>
 
     <!-- Main Navigation Pills -->
