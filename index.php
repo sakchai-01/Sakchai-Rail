@@ -1146,8 +1146,12 @@ declare(strict_types=1);
         }
 
         resetForm();
-        await loadMetadata();
-        await loadProducts();
+        try {
+          await loadMetadata();
+          await loadProducts();
+        } catch (refreshErr) {
+          console.warn('Post-save refresh error:', refreshErr);
+        }
       } catch (err) {
         showToast('บันทึกข้อมูลล้มเหลว: ' + err.message, 'danger');
       } finally {
@@ -1263,8 +1267,12 @@ declare(strict_types=1);
         }
 
         pendingDeleteId = null;
-        await loadMetadata();
-        await loadProducts();
+        try {
+          await loadMetadata();
+          await loadProducts();
+        } catch (refreshErr) {
+          console.warn('Post-delete refresh error:', refreshErr);
+        }
       } catch (err) {
         deleteModal.hide();
         showToast('ลบสินค้าไม่สำเร็จ: ' + err.message, 'danger');
@@ -1400,7 +1408,11 @@ declare(strict_types=1);
         addSupplierModal.hide();
         this.reset();
         showToast(res.message || 'เพิ่มผู้จัดส่งสินค้าสำเร็จ', 'success');
-        await loadMetadata();
+        try {
+          await loadMetadata();
+        } catch (postErr) {
+          console.warn('Post-supplier refresh error:', postErr);
+        }
       } catch (err) {
         showToast('เพิ่มผู้จัดส่งไม่สำเร็จ: ' + err.message, 'danger');
       } finally {
@@ -1438,7 +1450,11 @@ declare(strict_types=1);
         addCategoryModal.hide();
         this.reset();
         showToast(res.message || 'เพิ่มหมวดหมู่สินค้าสำเร็จ', 'success');
-        await loadMetadata();
+        try {
+          await loadMetadata();
+        } catch (postErr) {
+          console.warn('Post-category refresh error:', postErr);
+        }
       } catch (err) {
         showToast('เพิ่มหมวดหมู่ไม่สำเร็จ: ' + err.message, 'danger');
       } finally {
