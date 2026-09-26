@@ -23,13 +23,21 @@ function getDbConfig(): array {
           ?: '';
 
     if ($dbUrl !== '') {
+        if (str_starts_with($dbUrl, '${{')) {
+            throw new RuntimeException("ตัวแปร DATABASE_URL มีค่าเป็น '{$dbUrl}' ซึ่ง Railway ไม่สามารถแปลงค่าได้ (ชื่อ Service อาจไม่ตรงกัน) แนะนำให้ไปที่กล่อง MySQL Service -> แท็บ Variables -> ก๊อปปี้ค่า MYSQL_PRIVATE_URL ที่ขึ้นต้นด้วย mysql://... มาวางใส่แทนตรงๆ ครับ");
+        }
+
         $opts = parse_url($dbUrl);
-        $host = $opts['host'] ?? '127.0.0.1';
+        $host = $opts['host'] ?? '';
         $port = (int)($opts['port'] ?? 3306);
         $user = $opts['user'] ?? 'root';
         $pass = $opts['pass'] ?? '';
         $pathDb = isset($opts['path']) ? ltrim($opts['path'], '/') : '';
         $db = envVal('DB_NAME') ?: envVal('MYSQLDATABASE') ?: ($pathDb !== '' ? $pathDb : 'db_northwind');
+
+        if ($host === '') {
+            throw new RuntimeException("URL การเชื่อมต่อฐานข้อมูล '{$dbUrl}' รูปแบบไม่ถูกต้อง ไม่พบ Host");
+        }
 
         return [
             'host' => $host,
