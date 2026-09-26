@@ -8,12 +8,12 @@ declare(strict_types=1);
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Northwind Product Management — Web App with PHP & MySQL on Railway</title>
   <meta name="description" content="ระบบจัดการสินค้า Northwind CRUD Web Application พัฒนาด้วย PHP, MySQL และ Deploy บน Railway Cloud Platform (PaaS)">
-  
+
   <!-- Google Fonts: Prompt & Inter -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  
+
   <!-- Bootstrap 5.3.3 & Bootstrap Icons 1.11.3 -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
@@ -257,9 +257,9 @@ declare(strict_types=1);
         <div>
           <div class="d-flex align-items-center gap-2">
             <h1 class="h5 fw-bold mb-0">DB-Northwind</h1>
-            
+
           </div>
-          <p class="text-muted small mb-0">ระบบบริหารจัดการสินค้าและคลังสินค้า • PHP & MySQL</p>
+          <p class="text-muted small mb-0">ระบบบริหารจัดการสินค้า • PHP & MySQL</p>
         </div>
       </div>
 
@@ -280,7 +280,7 @@ declare(strict_types=1);
 
     <!-- Dashboard Stat Cards -->
     <section class="row g-3 mb-4" id="statsSection">
-      <div class="col-12 col-md-4">
+      <div class="col-6 col-md-3">
         <div class="stat-card d-flex align-items-center gap-3">
           <div class="stat-icon bg-primary bg-opacity-10 text-primary">
             <i class="bi bi-box-seam"></i>
@@ -291,7 +291,7 @@ declare(strict_types=1);
           </div>
         </div>
       </div>
-      <div class="col-12 col-md-4">
+      <div class="col-6 col-md-3">
         <div class="stat-card d-flex align-items-center gap-3">
           <div class="stat-icon bg-info bg-opacity-10 text-info">
             <i class="bi bi-tags"></i>
@@ -302,7 +302,7 @@ declare(strict_types=1);
           </div>
         </div>
       </div>
-      <div class="col-12 col-md-4">
+      <div class="col-6 col-md-3">
         <div class="stat-card d-flex align-items-center gap-3">
           <div class="stat-icon bg-warning bg-opacity-10 text-warning">
             <i class="bi bi-truck"></i>
@@ -313,6 +313,7 @@ declare(strict_types=1);
           </div>
         </div>
       </div>
+      
     </section>
 
     <!-- Main Navigation Pills -->
@@ -603,7 +604,6 @@ declare(strict_types=1);
       </div>
 
     </div>
-
   </main>
 
   <!-- Footer -->
