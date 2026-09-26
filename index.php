@@ -432,7 +432,7 @@ declare(strict_types=1);
                 <div class="d-flex gap-2">
                   <button type="submit" class="btn btn-primary-custom flex-grow-1" id="saveProductBtn">
                     <i class="bi bi-plus-circle me-1" id="saveProductBtnIcon"></i>
-                    <span id="saveProductBtnText">เพิ่มสินค้า</span>
+                    <span id="saveProductBtnText">เพิ่มสินค้าใหม่</span>
                   </button>
                   <button type="button" class="btn btn-outline-secondary d-none" id="cancelEditBtn" title="ยกเลิกการแก้ไข">
                     <i class="bi bi-x-circle me-1"></i>ยกเลิก
