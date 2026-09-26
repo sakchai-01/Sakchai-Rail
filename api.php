@@ -28,7 +28,6 @@ function jsonResponse(bool $success, string $message = '', mixed $data = [], int
 function requestBody(): array {
     $raw = file_get_contents('php://input');
     if ($raw === false || trim($raw) === '') {
-        // Fallback to $_POST if form-encoded
         return !empty($_POST) ? $_POST : [];
     }
     $data = json_decode($raw, true);
@@ -146,7 +145,9 @@ try {
     $cName  = $schema['categories']['name'];
     $cDesc  = $schema['categories']['desc'] ?? 'Description';
 
-    // 1. Resource: categories (GET / POST)
+    // ==========================================
+    // 1. Resource: categories (GET, POST, PUT, DELETE)
+    // ==========================================
     if ($resource === 'categories') {
         if ($method === 'GET') {
             $stmt = $pdo->query("SELECT {$cId} AS CategoryID, {$cName} AS CategoryName, {$cDesc} AS Description FROM {$cTable} ORDER BY {$cId} ASC");
@@ -166,24 +167,10 @@ try {
                 jsonResponse(false, 'ชื่อหมวดหมู่ต้องมีความยาวไม่เกิน 100 ตัวอักษร', [], 422);
             }
 
-            // คำนวณรหัส ID ถัดไป ป้องกัน error กรณีตารางไม่มี auto_increment
             $nextId = (int)$pdo->query("SELECT COALESCE(MAX({$cId}), 0) + 1 FROM {$cTable}")->fetchColumn();
 
             $stmt = $pdo->prepare("INSERT INTO {$cTable} ({$cId}, {$cName}, {$cDesc}) VALUES (?, ?, ?)");
-            try {
-                $stmt->execute([$nextId, $name, $desc]);
-            } catch (PDOException $ex) {
-                if ($ex->getCode() == '22001' || strpos($ex->getMessage(), '1406') !== false || stripos($ex->getMessage(), 'Data too long') !== false) {
-                    try {
-                        $pdo->exec("ALTER TABLE {$cTable} MODIFY {$cName} VARCHAR(255) NOT NULL, MODIFY {$cDesc} TEXT NULL");
-                        $stmt->execute([$nextId, $name, $desc]);
-                    } catch (Throwable $retryEx) {
-                        $stmt->execute([$nextId, mb_substr($name, 0, 30), mb_substr($desc, 0, 30)]);
-                    }
-                } else {
-                    throw $ex;
-                }
-            }
+            $stmt->execute([$nextId, $name, $desc]);
 
             jsonResponse(true, "เพิ่มหมวดหมู่สินค้า '{$name}' (รหัส #{$nextId}) สำเร็จแล้ว", [
                 'CategoryID'   => $nextId,
@@ -192,10 +179,57 @@ try {
             ], 201);
         }
 
+        if ($method === 'PUT') {
+            $data = requestBody();
+            $id = positiveInt($data['CategoryID'] ?? null, 'CategoryID');
+            $name = trim((string)($data['CategoryName'] ?? ''));
+            $desc = trim((string)($data['Description'] ?? ''));
+
+            if ($name === '') {
+                jsonResponse(false, 'กรุณาระบุชื่อหมวดหมู่สินค้า', [], 422);
+            }
+
+            $checkStmt = $pdo->prepare("SELECT {$cId} FROM {$cTable} WHERE {$cId} = ?");
+            $checkStmt->execute([$id]);
+            if (!$checkStmt->fetch()) {
+                jsonResponse(false, "ไม่พบหมวดหมู่ที่ต้องการแก้ไข (รหัส #{$id})", [], 404);
+            }
+
+            $updateStmt = $pdo->prepare("UPDATE {$cTable} SET {$cName} = ?, {$cDesc} = ? WHERE {$cId} = ?");
+            $updateStmt->execute([$name, $desc, $id]);
+
+            jsonResponse(true, "แก้ไขข้อมูลหมวดหมู่ #{$id} เรียบร้อยแล้ว", [
+                'CategoryID'   => $id,
+                'CategoryName' => $name,
+                'Description'  => $desc,
+            ]);
+        }
+
+        if ($method === 'DELETE') {
+            $data = requestBody();
+            $id = positiveInt($data['CategoryID'] ?? ($_GET['CategoryID'] ?? ($_GET['id'] ?? null)), 'CategoryID');
+
+            $checkStmt = $pdo->prepare("SELECT {$cId}, {$cName} FROM {$cTable} WHERE {$cId} = ?");
+            $checkStmt->execute([$id]);
+            $existing = $checkStmt->fetch();
+            if (!$existing) {
+                jsonResponse(false, "ไม่พบหมวดหมู่ที่ต้องการลบ (รหัส #{$id})", [], 404);
+            }
+
+            $delStmt = $pdo->prepare("DELETE FROM {$cTable} WHERE {$cId} = ?");
+            $delStmt->execute([$id]);
+
+            jsonResponse(true, "ลบหมวดหมู่รหัส #{$id} เรียบร้อยแล้ว", [
+                'CategoryID' => $id,
+            ]);
+        }
+
         jsonResponse(false, 'Method ไม่รองรับสำหรับ categories', [], 405);
     }
 
-    // 2. Resource: suppliers (GET / POST)
+    // ==========================================
+    // 2. Resource: suppliers (GET, POST, PUT, DELETE)
+    // ==========================================
     if ($resource === 'suppliers') {
         if ($method === 'GET') {
             $stmt = $pdo->query("SELECT 
@@ -226,44 +260,11 @@ try {
             if ($name === '') {
                 jsonResponse(false, 'กรุณาระบุชื่อบริษัท / ผู้จัดส่ง (SupplierName)', [], 422);
             }
-            if (mb_strlen($name) > 100) {
-                jsonResponse(false, 'ชื่อผู้จัดส่งต้องมีความยาวไม่เกิน 100 ตัวอักษร', [], 422);
-            }
 
-            // คำนวณรหัส ID ถัดไป ป้องกัน error กรณีตารางไม่มี auto_increment
             $nextId = (int)$pdo->query("SELECT COALESCE(MAX({$sId}), 0) + 1 FROM {$sTable}")->fetchColumn();
 
             $stmt = $pdo->prepare("INSERT INTO {$sTable} ({$sId}, {$sName}, {$sContact}, {$sAddress}, {$sCity}, {$sPostal}, {$sCountry}, {$sPhone}) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
-            try {
-                $stmt->execute([$nextId, $name, $contact, $address, $city, $postal, $country, $phone]);
-            } catch (PDOException $ex) {
-                if ($ex->getCode() == '22001' || strpos($ex->getMessage(), '1406') !== false || stripos($ex->getMessage(), 'Data too long') !== false) {
-                    try {
-                        $pdo->exec("ALTER TABLE {$sTable} 
-                            MODIFY {$sName} VARCHAR(255) NOT NULL,
-                            MODIFY {$sContact} VARCHAR(150) NULL,
-                            MODIFY {$sAddress} VARCHAR(255) NULL,
-                            MODIFY {$sCity} VARCHAR(100) NULL,
-                            MODIFY {$sPostal} VARCHAR(50) NULL,
-                            MODIFY {$sCountry} VARCHAR(100) NULL,
-                            MODIFY {$sPhone} VARCHAR(50) NULL");
-                        $stmt->execute([$nextId, $name, $contact, $address, $city, $postal, $country, $phone]);
-                    } catch (Throwable $retryEx) {
-                        $stmt->execute([
-                            $nextId,
-                            mb_substr($name, 0, 30),
-                            mb_substr($contact, 0, 30),
-                            mb_substr($address, 0, 30),
-                            mb_substr($city, 0, 30),
-                            mb_substr($postal, 0, 30),
-                            mb_substr($country, 0, 30),
-                            mb_substr($phone, 0, 30)
-                        ]);
-                    }
-                } else {
-                    throw $ex;
-                }
-            }
+            $stmt->execute([$nextId, $name, $contact, $address, $city, $postal, $country, $phone]);
 
             jsonResponse(true, "เพิ่มผู้จัดส่ง '{$name}' (รหัส #{$nextId}) สำเร็จแล้ว", [
                 'SupplierID'   => $nextId,
@@ -277,10 +278,65 @@ try {
             ], 201);
         }
 
+        if ($method === 'PUT') {
+            $data = requestBody();
+            $id = positiveInt($data['SupplierID'] ?? null, 'SupplierID');
+            $name    = trim((string)($data['SupplierName'] ?? ''));
+            $contact = trim((string)($data['ContactName'] ?? ''));
+            $address = trim((string)($data['Address'] ?? ''));
+            $city    = trim((string)($data['City'] ?? ''));
+            $postal  = trim((string)($data['PostalCode'] ?? ''));
+            $country = trim((string)($data['Country'] ?? ''));
+            $phone   = trim((string)($data['Phone'] ?? ''));
+
+            if ($name === '') {
+                jsonResponse(false, 'กรุณาระบุชื่อบริษัทผู้จัดส่ง', [], 422);
+            }
+
+            $checkStmt = $pdo->prepare("SELECT {$sId} FROM {$sTable} WHERE {$sId} = ?");
+            $checkStmt->execute([$id]);
+            if (!$checkStmt->fetch()) {
+                jsonResponse(false, "ไม่พบผู้จัดส่งที่ต้องการแก้ไข (รหัส #{$id})", [], 404);
+            }
+
+            $updateStmt = $pdo->prepare("UPDATE {$sTable} SET 
+                {$sName} = ?, 
+                {$sContact} = ?, 
+                {$sAddress} = ?, 
+                {$sCity} = ?, 
+                {$sPostal} = ?, 
+                {$sCountry} = ?, 
+                {$sPhone} = ? 
+            WHERE {$sId} = ?");
+            $updateStmt->execute([$name, $contact, $address, $city, $postal, $country, $phone, $id]);
+
+            jsonResponse(true, "แก้ไขข้อมูลผู้จัดส่ง #{$id} เรียบร้อยแล้ว");
+        }
+
+        if ($method === 'DELETE') {
+            $data = requestBody();
+            $id = positiveInt($data['SupplierID'] ?? ($_GET['SupplierID'] ?? ($_GET['id'] ?? null)), 'SupplierID');
+
+            $checkStmt = $pdo->prepare("SELECT {$sId} FROM {$sTable} WHERE {$sId} = ?");
+            $checkStmt->execute([$id]);
+            if (!$checkStmt->fetch()) {
+                jsonResponse(false, "ไม่พบผู้จัดส่งที่ต้องการลบ (รหัส #{$id})", [], 404);
+            }
+
+            $delStmt = $pdo->prepare("DELETE FROM {$sTable} WHERE {$sId} = ?");
+            $delStmt->execute([$id]);
+
+            jsonResponse(true, "ลบผู้จัดส่งรหัส #{$id} เรียบร้อยแล้ว", [
+                'SupplierID' => $id,
+            ]);
+        }
+
         jsonResponse(false, 'Method ไม่รองรับสำหรับ suppliers', [], 405);
     }
 
+    // ==========================================
     // 3. Resource: stats
+    // ==========================================
     if ($resource === 'stats') {
         if ($method !== 'GET') {
             jsonResponse(false, 'Method ไม่รองรับสำหรับ stats', [], 405);
@@ -301,9 +357,10 @@ try {
         ]);
     }
 
+    // ==========================================
     // 4. Resource: products (CRUD Main)
+    // ==========================================
     if ($resource === 'products') {
-        // Query builder helper for single/multiple product retrieval
         $baseSelect = "SELECT 
             p.{$pId} AS ProductID,
             p.{$pName} AS ProductName,
@@ -317,9 +374,7 @@ try {
         LEFT JOIN {$sTable} s ON s.{$sId} = p.{$pSup}
         LEFT JOIN {$cTable} c ON c.{$cId} = p.{$pCat}";
 
-        // --- READ & SEARCH (GET) ---
         if ($method === 'GET') {
-            // Check if requesting single product: ?id=1
             if (!empty($_GET['id'])) {
                 $id = positiveInt($_GET['id'], 'id');
                 $stmt = $pdo->prepare("{$baseSelect} WHERE p.{$pId} = ?");
@@ -357,7 +412,6 @@ try {
 
             $whereSql = !empty($whereParts) ? ' WHERE ' . implode(' AND ', $whereParts) : '';
 
-            // Sorting map
             $orderBy = match ($sort) {
                 'id_asc'     => " ORDER BY p.{$pId} ASC",
                 'name_asc'   => " ORDER BY p.{$pName} ASC",
@@ -373,7 +427,6 @@ try {
             $stmt->execute($params);
             $products = $stmt->fetchAll();
 
-            // Cast numeric fields properly
             foreach ($products as &$prod) {
                 $prod['ProductID'] = (int)$prod['ProductID'];
                 $prod['SupplierID'] = $prod['SupplierID'] !== null ? (int)$prod['SupplierID'] : null;
@@ -387,50 +440,18 @@ try {
             ]);
         }
 
-        // --- CREATE (POST) ---
         if ($method === 'POST') {
             $input = validateProductInput(requestBody(), false);
 
             $stmt = $pdo->prepare("INSERT INTO {$pTable} ({$pName}, {$pSup}, {$pCat}, {$pUnit}, {$pPrice}) VALUES (?, ?, ?, ?, ?)");
-            try {
-                $stmt->execute([
-                    $input['name'],
-                    $input['supplier_id'],
-                    $input['category_id'],
-                    $input['unit'],
-                    $input['price'],
-                ]);
-                $newId = (int)$pdo->lastInsertId();
-            } catch (PDOException $ex) {
-                if ($ex->getCode() == '22001' || strpos($ex->getMessage(), '1406') !== false || stripos($ex->getMessage(), 'Data too long') !== false) {
-                    try {
-                        $pdo->exec("ALTER TABLE {$pTable} MODIFY {$pName} VARCHAR(255) NOT NULL, MODIFY {$pUnit} VARCHAR(150) NULL");
-                        $stmt->execute([
-                            $input['name'],
-                            $input['supplier_id'],
-                            $input['category_id'],
-                            $input['unit'],
-                            $input['price'],
-                        ]);
-                    } catch (Throwable $retryEx) {
-                        $stmt->execute([
-                            mb_substr($input['name'], 0, 30),
-                            $input['supplier_id'],
-                            $input['category_id'],
-                            mb_substr($input['unit'], 0, 30),
-                            $input['price'],
-                        ]);
-                    }
-                    $newId = (int)$pdo->lastInsertId();
-                } else if (stripos($ex->getMessage(), "Field '{$pId}' doesn't have a default value") !== false) {
-                    $nextId = (int)$pdo->query("SELECT COALESCE(MAX({$pId}), 0) + 1 FROM {$pTable}")->fetchColumn();
-                    $stmtMan = $pdo->prepare("INSERT INTO {$pTable} ({$pId}, {$pName}, {$pSup}, {$pCat}, {$pUnit}, {$pPrice}) VALUES (?, ?, ?, ?, ?, ?)");
-                    $stmtMan->execute([$nextId, $input['name'], $input['supplier_id'], $input['category_id'], $input['unit'], $input['price']]);
-                    $newId = $nextId;
-                } else {
-                    throw $ex;
-                }
-            }
+            $stmt->execute([
+                $input['name'],
+                $input['supplier_id'],
+                $input['category_id'],
+                $input['unit'],
+                $input['price'],
+            ]);
+            $newId = (int)$pdo->lastInsertId();
 
             if ($newId <= 0) {
                 $newId = (int)$pdo->query("SELECT MAX({$pId}) FROM {$pTable}")->fetchColumn();
@@ -448,13 +469,11 @@ try {
             jsonResponse(true, "เพิ่มข้อมูลสินค้า '{$input['name']}' รหัส #{$newId} เรียบร้อยแล้ว", $created, 201);
         }
 
-        // --- UPDATE (PUT) ---
         if ($method === 'PUT') {
             $data = requestBody();
             $id = positiveInt($data['ProductID'] ?? null, 'ProductID');
             $input = validateProductInput($data, true);
 
-            // ตรวจสอบว่ามีสินค้านี้อยู่จริง
             $checkStmt = $pdo->prepare("SELECT {$pId} FROM {$pTable} WHERE {$pId} = ?");
             $checkStmt->execute([$id]);
             if (!$checkStmt->fetch()) {
@@ -468,42 +487,14 @@ try {
                 {$pUnit} = ?, 
                 {$pPrice} = ? 
             WHERE {$pId} = ?");
-
-            try {
-                $updateStmt->execute([
-                    $input['name'],
-                    $input['supplier_id'],
-                    $input['category_id'],
-                    $input['unit'],
-                    $input['price'],
-                    $id,
-                ]);
-            } catch (PDOException $ex) {
-                if ($ex->getCode() == '22001' || strpos($ex->getMessage(), '1406') !== false || stripos($ex->getMessage(), 'Data too long') !== false) {
-                    try {
-                        $pdo->exec("ALTER TABLE {$pTable} MODIFY {$pName} VARCHAR(255) NOT NULL, MODIFY {$pUnit} VARCHAR(150) NULL");
-                        $updateStmt->execute([
-                            $input['name'],
-                            $input['supplier_id'],
-                            $input['category_id'],
-                            $input['unit'],
-                            $input['price'],
-                            $id,
-                        ]);
-                    } catch (Throwable $retryEx) {
-                        $updateStmt->execute([
-                            mb_substr($input['name'], 0, 30),
-                            $input['supplier_id'],
-                            $input['category_id'],
-                            mb_substr($input['unit'], 0, 30),
-                            $input['price'],
-                            $id,
-                        ]);
-                    }
-                } else {
-                    throw $ex;
-                }
-            }
+            $updateStmt->execute([
+                $input['name'],
+                $input['supplier_id'],
+                $input['category_id'],
+                $input['unit'],
+                $input['price'],
+                $id,
+            ]);
 
             $fetchStmt = $pdo->prepare("{$baseSelect} WHERE p.{$pId} = ?");
             $fetchStmt->execute([$id]);
@@ -517,12 +508,10 @@ try {
             jsonResponse(true, "แก้ไขข้อมูลสินค้า #{$id} ({$input['name']}) เรียบร้อยแล้ว", $updated);
         }
 
-        // --- DELETE (DELETE) ---
         if ($method === 'DELETE') {
             $data = requestBody();
             $id = positiveInt($data['ProductID'] ?? ($_GET['ProductID'] ?? ($_GET['id'] ?? null)), 'ProductID');
 
-            // ตรวจสอบก่อนลบ
             $checkStmt = $pdo->prepare("SELECT {$pId}, {$pName} FROM {$pTable} WHERE {$pId} = ?");
             $checkStmt->execute([$id]);
             $existing = $checkStmt->fetch();
@@ -544,7 +533,6 @@ try {
         jsonResponse(false, "HTTP Method '{$method}' ไม่รองรับสำหรับ Resource นี้", [], 405);
     }
 
-    // Default 404 for unknown resources
     jsonResponse(false, "Resource '{$resource}' ไม่ถูกต้องหรือไม่รองรับ", [], 404);
 
 } catch (Throwable $e) {
