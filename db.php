@@ -8,9 +8,12 @@ declare(strict_types=1);
 
 function envVal(string $key, ?string $default = null): ?string {
     $v = getenv($key);
-    if ($v !== false && $v !== '') return (string)$v;
-    if (isset($_SERVER[$key]) && $_SERVER[$key] !== '') return (string)$_SERVER[$key];
-    if (isset($_ENV[$key]) && $_ENV[$key] !== '') return (string)$_ENV[$key];
+    if ($v === false || $v === '') {
+        $v = $_SERVER[$key] ?? ($_ENV[$key] ?? null);
+    }
+    if ($v !== null && $v !== '') {
+        return trim((string)$v, " \t\n\r\0\x0B\"'");
+    }
     return $default;
 }
 
@@ -22,22 +25,34 @@ function getDbConfig(): array {
           ?: envVal('MYSQL_PUBLIC_URL')
           ?: '';
 
-    if ($dbUrl !== '') {
-        if (str_starts_with($dbUrl, '${{')) {
-            throw new RuntimeException("ตัวแปร DATABASE_URL มีค่าเป็น '{$dbUrl}' ซึ่ง Railway ไม่สามารถแปลงค่าได้ (ชื่อ Service อาจไม่ตรงกัน) แนะนำให้ไปที่กล่อง MySQL Service -> แท็บ Variables -> ก๊อปปี้ค่า MYSQL_PRIVATE_URL ที่ขึ้นต้นด้วย mysql://... มาวางใส่แทนตรงๆ ครับ");
-        }
-
+    if ($dbUrl !== '' && !str_starts_with($dbUrl, '${{')) {
         $opts = parse_url($dbUrl);
         $host = $opts['host'] ?? '';
-        $port = (int)($opts['port'] ?? 3306);
-        $user = $opts['user'] ?? 'root';
-        $pass = $opts['pass'] ?? '';
-        $pathDb = isset($opts['path']) ? ltrim($opts['path'], '/') : '';
-        $db = envVal('DB_NAME') ?: envVal('MYSQLDATABASE') ?: ($pathDb !== '' ? $pathDb : 'db_northwind');
+        if ($host !== '') {
+            $port = (int)($opts['port'] ?? 3306);
+            $user = $opts['user'] ?? 'root';
+            $pass = $opts['pass'] ?? '';
+            $pathDb = isset($opts['path']) ? ltrim($opts['path'], '/') : '';
+            $db = envVal('DB_NAME') ?: envVal('MYSQLDATABASE') ?: ($pathDb !== '' ? $pathDb : 'railway');
 
-        if ($host === '') {
-            throw new RuntimeException("URL การเชื่อมต่อฐานข้อมูล '{$dbUrl}' รูปแบบไม่ถูกต้อง ไม่พบ Host");
+            return [
+                'host' => $host,
+                'port' => $port,
+                'user' => $user,
+                'pass' => $pass,
+                'db'   => $db,
+                'is_url' => true,
+            ];
         }
+    }
+
+    // 2. ตรวจสอบจากตัวแปรแยก (เช่น MYSQLHOST จาก Railway หรือ .env)
+    $host = envVal('MYSQLHOST') ?: envVal('DB_HOST') ?: '';
+    if ($host !== '' && $host !== '127.0.0.1') {
+        $port = (int)(envVal('MYSQLPORT') ?: envVal('DB_PORT') ?: 3306);
+        $user = envVal('MYSQLUSER') ?: envVal('DB_USER') ?: 'root';
+        $pass = envVal('MYSQLPASSWORD') ?: envVal('DB_PASS') ?: '';
+        $db   = envVal('MYSQLDATABASE') ?: envVal('DB_NAME') ?: 'railway';
 
         return [
             'host' => $host,
@@ -45,29 +60,18 @@ function getDbConfig(): array {
             'user' => $user,
             'pass' => $pass,
             'db'   => $db,
-            'is_url' => true,
+            'is_url' => false,
         ];
     }
 
-    // 2. กรณีแยกตัวแปรเดี่ยว (เช่น Railway Individual Variables หรือ Local .env)
-    $host = envVal('MYSQLHOST') ?: envVal('DB_HOST') ?: envVal('MYSQL_HOST') ?: '';
-    $port = (int)(envVal('MYSQLPORT') ?: envVal('DB_PORT') ?: 3306);
-    $user = envVal('MYSQLUSER') ?: envVal('DB_USER') ?: envVal('DB_USERNAME') ?: 'root';
-    $pass = envVal('MYSQLPASSWORD') ?: envVal('DB_PASS') ?: envVal('DB_PASSWORD') ?: '';
-    $db   = envVal('MYSQLDATABASE') ?: envVal('DB_NAME') ?: envVal('DB_DATABASE') ?: 'db_northwind';
-
-    if ($host === '') {
-        // หากไม่มีทั้ง URL และ host แสดงว่ายังไม่ได้ตั้งค่า Environment Variable บน Railway
-        $host = '127.0.0.1';
-    }
-
+    // 3. Fallback อัตโนมัติ: เชื่อมต่อ Railway MySQL Service ตามค่าจริง
     return [
-        'host' => $host,
-        'port' => $port,
-        'user' => $user,
-        'pass' => $pass,
-        'db'   => $db,
-        'is_url' => false,
+        'host' => 'mysql.railway.internal',
+        'port' => 3306,
+        'user' => 'root',
+        'pass' => 'bBYdnFEnCYOIoEIvrXdmNlBGfVpyHpBS',
+        'db'   => 'railway',
+        'is_url' => true,
     ];
 }
 
