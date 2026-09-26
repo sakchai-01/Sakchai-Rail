@@ -170,7 +170,20 @@ try {
             $nextId = (int)$pdo->query("SELECT COALESCE(MAX({$cId}), 0) + 1 FROM {$cTable}")->fetchColumn();
 
             $stmt = $pdo->prepare("INSERT INTO {$cTable} ({$cId}, {$cName}, {$cDesc}) VALUES (?, ?, ?)");
-            $stmt->execute([$nextId, $name, $desc]);
+            try {
+                $stmt->execute([$nextId, $name, $desc]);
+            } catch (PDOException $ex) {
+                if ($ex->getCode() == '22001' || strpos($ex->getMessage(), '1406') !== false || stripos($ex->getMessage(), 'Data too long') !== false) {
+                    try {
+                        $pdo->exec("ALTER TABLE {$cTable} MODIFY {$cName} VARCHAR(255) NOT NULL, MODIFY {$cDesc} TEXT NULL");
+                        $stmt->execute([$nextId, $name, $desc]);
+                    } catch (Throwable $retryEx) {
+                        $stmt->execute([$nextId, mb_substr($name, 0, 30), mb_substr($desc, 0, 30)]);
+                    }
+                } else {
+                    throw $ex;
+                }
+            }
 
             jsonResponse(true, "เพิ่มหมวดหมู่สินค้า '{$name}' (รหัส #{$nextId}) สำเร็จแล้ว", [
                 'CategoryID'   => $nextId,
@@ -221,7 +234,36 @@ try {
             $nextId = (int)$pdo->query("SELECT COALESCE(MAX({$sId}), 0) + 1 FROM {$sTable}")->fetchColumn();
 
             $stmt = $pdo->prepare("INSERT INTO {$sTable} ({$sId}, {$sName}, {$sContact}, {$sAddress}, {$sCity}, {$sPostal}, {$sCountry}, {$sPhone}) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
-            $stmt->execute([$nextId, $name, $contact, $address, $city, $postal, $country, $phone]);
+            try {
+                $stmt->execute([$nextId, $name, $contact, $address, $city, $postal, $country, $phone]);
+            } catch (PDOException $ex) {
+                if ($ex->getCode() == '22001' || strpos($ex->getMessage(), '1406') !== false || stripos($ex->getMessage(), 'Data too long') !== false) {
+                    try {
+                        $pdo->exec("ALTER TABLE {$sTable} 
+                            MODIFY {$sName} VARCHAR(255) NOT NULL,
+                            MODIFY {$sContact} VARCHAR(150) NULL,
+                            MODIFY {$sAddress} VARCHAR(255) NULL,
+                            MODIFY {$sCity} VARCHAR(100) NULL,
+                            MODIFY {$sPostal} VARCHAR(50) NULL,
+                            MODIFY {$sCountry} VARCHAR(100) NULL,
+                            MODIFY {$sPhone} VARCHAR(50) NULL");
+                        $stmt->execute([$nextId, $name, $contact, $address, $city, $postal, $country, $phone]);
+                    } catch (Throwable $retryEx) {
+                        $stmt->execute([
+                            $nextId,
+                            mb_substr($name, 0, 30),
+                            mb_substr($contact, 0, 30),
+                            mb_substr($address, 0, 30),
+                            mb_substr($city, 0, 30),
+                            mb_substr($postal, 0, 30),
+                            mb_substr($country, 0, 30),
+                            mb_substr($phone, 0, 30)
+                        ]);
+                    }
+                } else {
+                    throw $ex;
+                }
+            }
 
             jsonResponse(true, "เพิ่มผู้จัดส่ง '{$name}' (รหัส #{$nextId}) สำเร็จแล้ว", [
                 'SupplierID'   => $nextId,
@@ -350,15 +392,49 @@ try {
             $input = validateProductInput(requestBody(), false);
 
             $stmt = $pdo->prepare("INSERT INTO {$pTable} ({$pName}, {$pSup}, {$pCat}, {$pUnit}, {$pPrice}) VALUES (?, ?, ?, ?, ?)");
-            $stmt->execute([
-                $input['name'],
-                $input['supplier_id'],
-                $input['category_id'],
-                $input['unit'],
-                $input['price'],
-            ]);
+            try {
+                $stmt->execute([
+                    $input['name'],
+                    $input['supplier_id'],
+                    $input['category_id'],
+                    $input['unit'],
+                    $input['price'],
+                ]);
+                $newId = (int)$pdo->lastInsertId();
+            } catch (PDOException $ex) {
+                if ($ex->getCode() == '22001' || strpos($ex->getMessage(), '1406') !== false || stripos($ex->getMessage(), 'Data too long') !== false) {
+                    try {
+                        $pdo->exec("ALTER TABLE {$pTable} MODIFY {$pName} VARCHAR(255) NOT NULL, MODIFY {$pUnit} VARCHAR(150) NULL");
+                        $stmt->execute([
+                            $input['name'],
+                            $input['supplier_id'],
+                            $input['category_id'],
+                            $input['unit'],
+                            $input['price'],
+                        ]);
+                    } catch (Throwable $retryEx) {
+                        $stmt->execute([
+                            mb_substr($input['name'], 0, 30),
+                            $input['supplier_id'],
+                            $input['category_id'],
+                            mb_substr($input['unit'], 0, 30),
+                            $input['price'],
+                        ]);
+                    }
+                    $newId = (int)$pdo->lastInsertId();
+                } else if (stripos($ex->getMessage(), "Field '{$pId}' doesn't have a default value") !== false) {
+                    $nextId = (int)$pdo->query("SELECT COALESCE(MAX({$pId}), 0) + 1 FROM {$pTable}")->fetchColumn();
+                    $stmtMan = $pdo->prepare("INSERT INTO {$pTable} ({$pId}, {$pName}, {$pSup}, {$pCat}, {$pUnit}, {$pPrice}) VALUES (?, ?, ?, ?, ?, ?)");
+                    $stmtMan->execute([$nextId, $input['name'], $input['supplier_id'], $input['category_id'], $input['unit'], $input['price']]);
+                    $newId = $nextId;
+                } else {
+                    throw $ex;
+                }
+            }
 
-            $newId = (int)$pdo->lastInsertId();
+            if ($newId <= 0) {
+                $newId = (int)$pdo->query("SELECT MAX({$pId}) FROM {$pTable}")->fetchColumn();
+            }
 
             $fetchStmt = $pdo->prepare("{$baseSelect} WHERE p.{$pId} = ?");
             $fetchStmt->execute([$newId]);
@@ -393,14 +469,41 @@ try {
                 {$pPrice} = ? 
             WHERE {$pId} = ?");
 
-            $updateStmt->execute([
-                $input['name'],
-                $input['supplier_id'],
-                $input['category_id'],
-                $input['unit'],
-                $input['price'],
-                $id,
-            ]);
+            try {
+                $updateStmt->execute([
+                    $input['name'],
+                    $input['supplier_id'],
+                    $input['category_id'],
+                    $input['unit'],
+                    $input['price'],
+                    $id,
+                ]);
+            } catch (PDOException $ex) {
+                if ($ex->getCode() == '22001' || strpos($ex->getMessage(), '1406') !== false || stripos($ex->getMessage(), 'Data too long') !== false) {
+                    try {
+                        $pdo->exec("ALTER TABLE {$pTable} MODIFY {$pName} VARCHAR(255) NOT NULL, MODIFY {$pUnit} VARCHAR(150) NULL");
+                        $updateStmt->execute([
+                            $input['name'],
+                            $input['supplier_id'],
+                            $input['category_id'],
+                            $input['unit'],
+                            $input['price'],
+                            $id,
+                        ]);
+                    } catch (Throwable $retryEx) {
+                        $updateStmt->execute([
+                            mb_substr($input['name'], 0, 30),
+                            $input['supplier_id'],
+                            $input['category_id'],
+                            mb_substr($input['unit'], 0, 30),
+                            $input['price'],
+                            $id,
+                        ]);
+                    }
+                } else {
+                    throw $ex;
+                }
+            }
 
             $fetchStmt = $pdo->prepare("{$baseSelect} WHERE p.{$pId} = ?");
             $fetchStmt->execute([$id]);
