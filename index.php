@@ -292,17 +292,7 @@ declare(strict_types=1);
           </div>
         </div>
       </div>
-      <div class="col-12 col-md-4">
-        <div class="stat-card d-flex align-items-center gap-3">
-          <div class="stat-icon bg-info bg-opacity-10 text-info">
-            <i class="bi bi-tags"></i>
-          </div>
-          <div>
-            <div class="text-muted small fw-medium">หมวดหมู่สินค้า</div>
-            <div class="h4 fw-bold mb-0" id="statTotalCategories">-</div>
-          </div>
-        </div>
-      </div>
+
       <div class="col-12 col-md-4">
         <div class="stat-card d-flex align-items-center gap-3">
           <div class="stat-icon bg-warning bg-opacity-10 text-warning">
@@ -314,6 +304,19 @@ declare(strict_types=1);
           </div>
         </div>
       </div>
+      
+      <div class="col-12 col-md-4">
+        <div class="stat-card d-flex align-items-center gap-3">
+          <div class="stat-icon bg-info bg-opacity-10 text-info">
+            <i class="bi bi-tags"></i>
+          </div>
+          <div>
+            <div class="text-muted small fw-medium">หมวดหมู่สินค้า</div>
+            <div class="h4 fw-bold mb-0" id="statTotalCategories">-</div>
+          </div>
+        </div>
+      </div>
+      
     </section>
 
     <!-- Main Navigation Pills -->
@@ -337,7 +340,7 @@ declare(strict_types=1);
       </ul>
 
       <div class="text-muted small d-none d-md-block">
-        <i class="bi bi-shield-check text-success me-1"></i>PDO Prepared Statements • Input Validation Active
+        <i class="bi bi-shield-check text-success me-1"></i> Statements Active
       </div>
     </div>
 
@@ -470,7 +473,7 @@ declare(strict_types=1);
                 <div class="col-6 col-md-2">
                   <select class="form-select" id="sortBy" title="เรียงลำดับข้อมูล">
                     <option value="id_desc">ID ล่าสุด</option>
-                    <option value="id_asc">ID แรกสุด</option>
+                    <option value="id_asc">ID เก่าสุด</option>
                     <option value="name_asc">ชื่อ A-Z</option>
                     <option value="name_desc">ชื่อ Z-A</option>
                     <option value="price_asc">ราคา ต่ำ-สูง</option>
@@ -609,7 +612,7 @@ declare(strict_types=1);
   <!-- Footer -->
   <footer class="text-center text-muted small py-4 border-top bg-white">
     <div class="container">
-      Northwind Web Application • Development & Deployment of Web App with PHP and MySQL • Cloud Platform (Railway PaaS)
+      Northwind Web Application • Railway
     </div>
   </footer>
 
@@ -1154,7 +1157,7 @@ declare(strict_types=1);
           console.warn('Post-save refresh error:', refreshErr);
         }
       } catch (err) {
-        showToast('บันทึกข้อมูลล้มเหลว: ' + err.message, 'danger');
+        showToast('บันทึกข้อมูลล้มเหลว: ' + (err.message || err), 'danger');
       } finally {
         saveBtn.disabled = false;
         updateSaveBtnLabel();
