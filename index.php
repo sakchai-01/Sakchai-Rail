@@ -277,7 +277,7 @@ declare(strict_types=1);
   </header>
 
   <!-- Main Workspace -->
-  <main class="container-fluid px-3 px-lg-4 mb-5" style="max-width: 1560px;">
+  <main class="container-fluid px-4 mb-5">
 
     <!-- Dashboard Stat Cards (3 Cards) -->
     <section class="row g-3 mb-4" id="statsSection">
@@ -472,12 +472,12 @@ declare(strict_types=1);
 
                 <div class="col-6 col-md-2">
                   <select class="form-select" id="sortBy" title="เรียงลำดับข้อมูล">
-                    <option value="id_desc">ID ล่าสุด</option>
-                    <option value="id_asc">ID เก่าสุด</option>
-                    <option value="name_asc">ชื่อ A-Z</option>
-                    <option value="name_desc">ชื่อ Z-A</option>
-                    <option value="price_asc">ราคา ต่ำ-สูง</option>
-                    <option value="price_desc">ราคา สูง-ต่ำ</option>
+                      <option value="id_desc" selected>ID ล่าสุด</option>
+                      <option value="id_asc">ID เก่าสุด</option>
+                      <option value="name_asc">ชื่อ A-Z</option>
+                      <option value="name_desc">ชื่อ Z-A</option>
+                      <option value="price_asc">ราคา ต่ำ-สูง</option>
+                      <option value="price_desc">ราคา สูง-ต่ำ</option>
                   </select>
                 </div>
 
