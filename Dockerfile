@@ -5,7 +5,7 @@ RUN a2dismod mpm_event mpm_worker 2>/dev/null || true \
     && rm -f /etc/apache2/mods-enabled/mpm_event.* /etc/apache2/mods-enabled/mpm_worker.* 2>/dev/null || true \
     && a2enmod mpm_prefork rewrite headers
 
-# ติดตั้ง extensions ที่จำเป็นสำหรับเชื่อมต่อ MySQL (PDO MySQL)
+# ติดตั้ง extensions สำหรับ MySQL (PDO MySQL)
 RUN docker-php-ext-install pdo pdo_mysql
 
 # กำหนด working directory
@@ -18,7 +18,7 @@ COPY . /var/www/html/
 RUN chown -R www-data:www-data /var/www/html \
     && chmod -R 755 /var/www/html
 
-# สคริปต์ Entrypoint เพื่อรองรับ dynamic PORT ของ Railway ($PORT) และเคลียร์ MPM ให้เหลือ mpm_prefork ตัวเดียว
+# สคริปต์ Entrypoint เพื่อรองรับ dynamic PORT ของ Railway ($PORT)
 RUN echo '#!/bin/sh\n\
 rm -f /etc/apache2/mods-enabled/mpm_event.* /etc/apache2/mods-enabled/mpm_worker.* 2>/dev/null || true\n\
 PORT="${PORT:-80}"\n\
