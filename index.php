@@ -279,7 +279,7 @@ declare(strict_types=1);
   <main class="container-fluid px-3 px-lg-4 mb-5" style="max-width: 1560px;">
 
     <!-- Dashboard Stat Cards -->
-    <section class="row g-3 mb-4" id="statsSection">
+    <section class="col-12 col-md-4" id="statsSection">
       <div class="col-6 col-md-3">
         <div class="stat-card d-flex align-items-center gap-3">
           <div class="stat-icon bg-primary bg-opacity-10 text-primary">
@@ -291,7 +291,7 @@ declare(strict_types=1);
           </div>
         </div>
       </div>
-      <div class="col-6 col-md-3">
+      <div class="col-12 col-md-4">
         <div class="stat-card d-flex align-items-center gap-3">
           <div class="stat-icon bg-info bg-opacity-10 text-info">
             <i class="bi bi-tags"></i>
@@ -302,7 +302,7 @@ declare(strict_types=1);
           </div>
         </div>
       </div>
-      <div class="col-6 col-md-3">
+      <div class="col-12 col-md-4">
         <div class="stat-card d-flex align-items-center gap-3">
           <div class="stat-icon bg-warning bg-opacity-10 text-warning">
             <i class="bi bi-truck"></i>
