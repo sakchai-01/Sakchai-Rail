@@ -256,12 +256,10 @@ declare(strict_types=1);
         </div>
         <div>
           <div class="d-flex align-items-center gap-2">
-            <h1 class="h5 fw-bold mb-0">Northwind Commerce</h1>
-            <span class="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25 rounded-pill px-2 py-1" style="font-size: 0.72rem;">
-              Railway PaaS • CRUD API
-            </span>
+            <h1 class="h5 fw-bold mb-0">DB-Northwind</h1>
+            
           </div>
-          <p class="text-muted small mb-0">ระบบบริหารจัดการสินค้า • Development & Deployment of Web App (PHP & MySQL)</p>
+          <p class="text-muted small mb-0">ระบบบริหารจัดการสินค้า • PHP & MySQL</p>
         </div>
       </div>
 
@@ -310,22 +308,12 @@ declare(strict_types=1);
             <i class="bi bi-truck"></i>
           </div>
           <div>
-            <div class="text-muted small fw-medium">ผู้จัดส่ง (Suppliers)</div>
+            <div class="text-muted small fw-medium">รายชื่อผู้จัดส่ง</div>
             <div class="h4 fw-bold mb-0" id="statTotalSuppliers">-</div>
           </div>
         </div>
       </div>
-      <div class="col-6 col-md-3">
-        <div class="stat-card d-flex align-items-center gap-3">
-          <div class="stat-icon bg-success bg-opacity-10 text-success">
-            <i class="bi bi-currency-dollar"></i>
-          </div>
-          <div>
-            <div class="text-muted small fw-medium">ราคาเฉลี่ยต่อชิ้น</div>
-            <div class="h4 fw-bold mb-0" id="statAvgPrice">-</div>
-          </div>
-        </div>
-      </div>
+      
     </section>
 
     <!-- Main Navigation Pills -->
