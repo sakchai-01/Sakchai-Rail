@@ -888,15 +888,20 @@ declare(strict_types=1);
 
         // 5. Update KPI Stats
         if (statsRes.data) {
-          document.getElementById('statTotalProducts').textContent = statsRes.data.total_products.toLocaleString();
-          document.getElementById('statTotalCategories').textContent = statsRes.data.total_categories.toLocaleString();
-          document.getElementById('statTotalSuppliers').textContent = statsRes.data.total_suppliers.toLocaleString();
-          const avgEl = document.getElementById('statAvgPrice');
-          if (avgEl) {
-            avgEl.textContent = '$' + Number(statsRes.data.avg_price).toFixed(2);
+          const elTotalProd = document.getElementById('statTotalProducts');
+          if (elTotalProd) elTotalProd.textContent = (statsRes.data.total_products ?? 0).toLocaleString();
+
+          const elTotalCat = document.getElementById('statTotalCategories');
+          if (elTotalCat) elTotalCat.textContent = (statsRes.data.total_categories ?? 0).toLocaleString();
+
+          const elTotalSup = document.getElementById('statTotalSuppliers');
+          if (elTotalSup) elTotalSup.textContent = (statsRes.data.total_suppliers ?? 0).toLocaleString();
+
+          const elAvgPrice = document.getElementById('statAvgPrice');
+          if (elAvgPrice && statsRes.data.avg_price !== undefined) {
+            elAvgPrice.textContent = '$' + Number(statsRes.data.avg_price).toFixed(2);
           }
         }
-
         updateApiStatus(true, 'API Connected • DB Online');
       } catch (err) {
         updateApiStatus(false, 'API Disconnected');
