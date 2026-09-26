@@ -443,7 +443,7 @@ declare(strict_types=1);
                   <button type="button" class="btn btn-light border text-muted" id="clearFormBtn" title="ล้างฟอร์ม">
                     <i class="bi bi-arrow-counterclockwise"></i>
                   </button>
-                </div>
+              </div>
               </form>
             </div>
           </div>
@@ -711,6 +711,15 @@ declare(strict_types=1);
   </div>
 </div>
 
+  </main>
+
+  <!-- Footer -->
+  <footer class="text-center text-muted small py-4 border-top bg-white">
+    <div class="container">
+      Northwind Web Application • Railway
+    </div>
+  </footer>
+
   <!-- ================= Delete Confirmation Modal ================= -->
   <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalTitle" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
@@ -768,102 +777,6 @@ declare(strict_types=1);
     </div>
   </div>
 
-  <!-- ================= Add Supplier Modal ================= -->
-  <div class="modal fade" id="addSupplierModal" tabindex="-1" aria-labelledby="addSupplierModalTitle" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content rounded-4 border-0 shadow">
-        <div class="modal-header border-0 pb-0">
-          <div class="d-flex align-items-center gap-2">
-            <div class="stat-icon bg-warning bg-opacity-10 text-warning" style="width: 36px; height: 36px;">
-              <i class="bi bi-truck"></i>
-            </div>
-            <h3 class="modal-title h5 fw-bold mb-0" id="addSupplierModalTitle">เพิ่มผู้จัดส่งสินค้าใหม่ (Add Supplier)</h3>
-          </div>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <form id="addSupplierForm" novalidate>
-          <div class="modal-body py-3">
-            <div class="mb-3">
-              <label class="form-label" for="addSupplierName">ชื่อบริษัท / ผู้จัดส่ง <span class="text-danger">*</span></label>
-              <input type="text" class="form-control" id="addSupplierName" placeholder="เช่น ABC Logistics, Siam Foods" maxlength="100" required>
-              <div class="invalid-feedback">กรุณาระบุชื่อผู้จัดส่งสินค้า</div>
-            </div>
-            <div class="mb-3">
-              <label class="form-label" for="addContactName">ชื่อผู้ติดต่อ</label>
-              <input type="text" class="form-control" id="addContactName" placeholder="เช่น สมชาย ใจดี" maxlength="100">
-            </div>
-            <div class="mb-3">
-              <label class="form-label" for="addAddress">ที่อยู่</label>
-              <input type="text" class="form-control" id="addAddress" placeholder="เช่น 123 ถ.สุขุมวิท" maxlength="150">
-            </div>
-            <div class="row g-2 mb-3">
-              <div class="col-7">
-                <label class="form-label" for="addCity">เมือง / จังหวัด</label>
-                <input type="text" class="form-control" id="addCity" placeholder="เช่น Bangkok, Chiang Mai" maxlength="50">
-              </div>
-              <div class="col-5">
-                <label class="form-label" for="addPostalCode">รหัสไปรษณีย์</label>
-                <input type="text" class="form-control" id="addPostalCode" placeholder="เช่น 10110" maxlength="20">
-              </div>
-            </div>
-            <div class="row g-2">
-              <div class="col-6">
-                <label class="form-label" for="addCountry">ประเทศ</label>
-                <input type="text" class="form-control" id="addCountry" placeholder="เช่น Thailand, Japan" maxlength="50">
-              </div>
-              <div class="col-6">
-                <label class="form-label" for="addPhone">เบอร์โทรศัพท์</label>
-                <input type="text" class="form-control" id="addPhone" placeholder="เช่น (02) 123-4567" maxlength="50">
-              </div>
-            </div>
-          </div>
-          <div class="modal-footer border-0 pt-0">
-            <button type="button" class="btn btn-light rounded-3 px-3" data-bs-dismiss="modal">ยกเลิก</button>
-            <button type="submit" class="btn btn-primary-custom rounded-3 px-4" id="saveSupplierBtn">
-              <i class="bi bi-plus-circle me-1"></i>บันทึกผู้จัดส่ง
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
-  </div>
-
-  <!-- ================= Add Category Modal ================= -->
-  <div class="modal fade" id="addCategoryModal" tabindex="-1" aria-labelledby="addCategoryModalTitle" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content rounded-4 border-0 shadow">
-        <div class="modal-header border-0 pb-0">
-          <div class="d-flex align-items-center gap-2">
-            <div class="stat-icon bg-info bg-opacity-10 text-info" style="width: 36px; height: 36px;">
-              <i class="bi bi-tag"></i>
-            </div>
-            <h3 class="modal-title h5 fw-bold mb-0" id="addCategoryModalTitle">เพิ่มหมวดหมู่สินค้าใหม่ (Add Category)</h3>
-          </div>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <form id="addCategoryForm" novalidate>
-          <div class="modal-body py-3">
-            <div class="mb-3">
-              <label class="form-label" for="addCategoryName">ชื่อหมวดหมู่สินค้า <span class="text-danger">*</span></label>
-              <input type="text" class="form-control" id="addCategoryName" placeholder="เช่น Bakery, Electronics, Organic" maxlength="100" required>
-              <div class="invalid-feedback">กรุณาระบุชื่อหมวดหมู่สินค้า</div>
-            </div>
-            <div class="mb-3">
-              <label class="form-label" for="addCategoryDesc">คำอธิบายหมวดหมู่</label>
-              <textarea class="form-control" id="addCategoryDesc" rows="3" placeholder="ระบุรายละเอียดเพิ่มเติมเกี่ยวกับสินค้าในหมวดหมู่นี้..." maxlength="255"></textarea>
-            </div>
-          </div>
-          <div class="modal-footer border-0 pt-0">
-            <button type="button" class="btn btn-light rounded-3 px-3" data-bs-dismiss="modal">ยกเลิก</button>
-            <button type="submit" class="btn btn-primary-custom rounded-3 px-4" id="saveCategoryBtn">
-              <i class="bi bi-plus-circle me-1"></i>บันทึกหมวดหมู่
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
-  </div>
-
   <!-- Bootstrap JS Bundle -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
@@ -887,8 +800,6 @@ declare(strict_types=1);
     // Bootstrap Modal instances
     const deleteModal = new bootstrap.Modal(document.getElementById('deleteModal'));
     const healthModal = new bootstrap.Modal(document.getElementById('healthModal'));
-    const addSupplierModal = new bootstrap.Modal(document.getElementById('addSupplierModal'));
-    const addCategoryModal = new bootstrap.Modal(document.getElementById('addCategoryModal'));
 
     // --- Toast Notification System ---
     function showToast(message, type = 'success') {
@@ -999,11 +910,6 @@ declare(strict_types=1);
 
           const elTotalSup = document.getElementById('statTotalSuppliers');
           if (elTotalSup) elTotalSup.textContent = (statsRes.data.total_suppliers ?? 0).toLocaleString();
-
-          const elAvgPrice = document.getElementById('statAvgPrice');
-          if (elAvgPrice && statsRes.data.avg_price !== undefined) {
-            elAvgPrice.textContent = '$' + Number(statsRes.data.avg_price).toFixed(2);
-          }
         }
         updateApiStatus(true, 'API Connected • DB Online');
       } catch (err) {
@@ -1025,28 +931,28 @@ declare(strict_types=1);
     // --- 1. จัดการ Suppliers (CRUD) ---
     function renderSuppliersTab(items) {
       const tbody = document.getElementById('supplierTableBody');
-        if (!items || items.length === 0) {
-          tbody.innerHTML = '<tr><td colspan="6" class="text-center py-4 text-muted">ไม่พบข้อมูลผู้จัดส่ง</td></tr>';
-          return;
-        }
-        tbody.innerHTML = items.map(s => `
-          <tr>
-            <td><span class="badge bg-light text-dark border">#${s.SupplierID}</span></td>
-            <td class="fw-semibold text-primary">${escapeHtml(s.SupplierName)}</td>
-            <td>${escapeHtml(s.ContactName || '-')}</td>
-            <td>${escapeHtml(s.City || '-')}, ${escapeHtml(s.Country || '-')}</td>
-            <td>${escapeHtml(s.Phone || '-')}</td>
-            <td class="text-center text-nowrap">
-              <button class="btn btn-sm btn-outline-primary rounded-2 px-2 me-1" onclick='startEditSupplier(${JSON.stringify(s).replace(/'/g, "&#039;")})' title="แก้ไข">
-                <i class="bi bi-pencil"></i>
-              </button>
-              <button class="btn btn-sm btn-outline-danger rounded-2 px-2" onclick="deleteSupplier(${s.SupplierID})" title="ลบ">
-                <i class="bi bi-trash"></i>
-              </button>
-            </td>
-          </tr>
-        `).join('');
+      if (!items || items.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" class="text-center py-4 text-muted">ไม่พบข้อมูลผู้จัดส่ง</td></tr>';
+        return;
       }
+      tbody.innerHTML = items.map(s => `
+        <tr>
+          <td><span class="badge bg-light text-dark border">#${s.SupplierID}</span></td>
+          <td class="fw-semibold text-primary">${escapeHtml(s.SupplierName)}</td>
+          <td>${escapeHtml(s.ContactName || '-')}</td>
+          <td>${escapeHtml(s.City || '-')}, ${escapeHtml(s.Country || '-')}</td>
+          <td>${escapeHtml(s.Phone || '-')}</td>
+          <td class="text-center text-nowrap">
+            <button class="btn btn-sm btn-outline-primary rounded-2 px-2 me-1" onclick='startEditSupplier(${JSON.stringify(s).replace(/'/g, "&#039;")})' title="แก้ไข">
+              <i class="bi bi-pencil"></i>
+            </button>
+            <button class="btn btn-sm btn-outline-danger rounded-2 px-2" onclick="deleteSupplier(${s.SupplierID})" title="ลบ">
+              <i class="bi bi-trash"></i>
+            </button>
+          </td>
+        </tr>
+      `).join('');
+    }
 
     function startEditSupplier(s) {
       editingSupplierId = Number(s.SupplierID);
@@ -1127,98 +1033,98 @@ declare(strict_types=1);
     }
 
     // --- 2. จัดการ Categories (CRUD) ---
-function renderCategoriesTab(items) {
-  const container = document.getElementById('categoriesCardContainer');
-  if (!items || items.length === 0) {
-    container.innerHTML = '<div class="col-12 text-center py-4 text-muted">ไม่พบข้อมูลหมวดหมู่</div>';
-    return;
-  }
-  container.innerHTML = items.map(c => `
-    <div class="col-12 col-md-6">
-      <div class="p-3 bg-light rounded-3 border h-100 d-flex flex-column justify-content-between">
-        <div>
-          <div class="d-flex justify-content-between align-items-center mb-2">
-            <span class="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25 rounded-pill">ID: ${c.CategoryID}</span>
-            <div class="text-nowrap">
-              <button class="btn btn-sm btn-outline-primary py-0 px-2 me-1" onclick='startEditCategory(${JSON.stringify(c).replace(/'/g, "&#039;")})' title="แก้ไข"><i class="bi bi-pencil"></i></button>
-              <button class="btn btn-sm btn-outline-danger py-0 px-2" onclick="deleteCategory(${c.CategoryID})" title="ลบ"><i class="bi bi-trash"></i></button>
+    function renderCategoriesTab(items) {
+      const container = document.getElementById('categoriesCardContainer');
+      if (!items || items.length === 0) {
+        container.innerHTML = '<div class="col-12 text-center py-4 text-muted">ไม่พบข้อมูลหมวดหมู่</div>';
+        return;
+      }
+      container.innerHTML = items.map(c => `
+        <div class="col-12 col-md-6">
+          <div class="p-3 bg-light rounded-3 border h-100 d-flex flex-column justify-content-between">
+            <div>
+              <div class="d-flex justify-content-between align-items-center mb-2">
+                <span class="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25 rounded-pill">ID: ${c.CategoryID}</span>
+                <div class="text-nowrap">
+                  <button class="btn btn-sm btn-outline-primary py-0 px-2 me-1" onclick='startEditCategory(${JSON.stringify(c).replace(/'/g, "&#039;")})' title="แก้ไข"><i class="bi bi-pencil"></i></button>
+                  <button class="btn btn-sm btn-outline-danger py-0 px-2" onclick="deleteCategory(${c.CategoryID})" title="ลบ"><i class="bi bi-trash"></i></button>
+                </div>
+              </div>
+              <h4 class="h6 fw-bold mb-1">${escapeHtml(c.CategoryName)}</h4>
+              <p class="text-muted small mb-0">${escapeHtml(c.Description || 'ไม่มีคำอธิบายเพิ่มเติม')}</p>
             </div>
           </div>
-          <h4 class="h6 fw-bold mb-1">${escapeHtml(c.CategoryName)}</h4>
-          <p class="text-muted small mb-0">${escapeHtml(c.Description || 'ไม่มีคำอธิบายเพิ่มเติม')}</p>
         </div>
-      </div>
-    </div>
-  `).join('');
-}
+      `).join('');
+    }
 
-function startEditCategory(c) {
-  editingCategoryId = Number(c.CategoryID);
-  document.getElementById('CategoryID').value = editingCategoryId;
-  document.getElementById('CategoryName').value = c.CategoryName || '';
-  document.getElementById('CategoryDesc').value = c.Description || '';
+    function startEditCategory(c) {
+      editingCategoryId = Number(c.CategoryID);
+      document.getElementById('CategoryID').value = editingCategoryId;
+      document.getElementById('CategoryName').value = c.CategoryName || '';
+      document.getElementById('CategoryDesc').value = c.Description || '';
 
-  document.getElementById('catFormHeaderTitle').textContent = `แก้ไขหมวดหมู่ #${editingCategoryId}`;
-  document.getElementById('catFormModeBadge').textContent = `Editing #${editingCategoryId}`;
-  document.getElementById('catFormModeBadge').className = 'badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25 rounded-pill px-2 py-1';
-  document.getElementById('saveCategoryBtnText').textContent = 'บันทึกการแก้ไข';
-  document.getElementById('cancelCatEditBtn').classList.remove('d-none');
-}
+      document.getElementById('catFormHeaderTitle').textContent = `แก้ไขหมวดหมู่ #${editingCategoryId}`;
+      document.getElementById('catFormModeBadge').textContent = `Editing #${editingCategoryId}`;
+      document.getElementById('catFormModeBadge').className = 'badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25 rounded-pill px-2 py-1';
+      document.getElementById('saveCategoryBtnText').textContent = 'บันทึกการแก้ไข';
+      document.getElementById('cancelCatEditBtn').classList.remove('d-none');
+    }
 
-function resetCategoryForm() {
-  editingCategoryId = null;
-  document.getElementById('categoryForm').reset();
-  document.getElementById('CategoryID').value = '';
-  document.getElementById('catFormHeaderTitle').textContent = 'เพิ่มหมวดหมู่ใหม่';
-  document.getElementById('catFormModeBadge').textContent = 'Create Mode';
-  document.getElementById('catFormModeBadge').className = 'badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 rounded-pill px-2 py-1';
-  document.getElementById('saveCategoryBtnText').textContent = 'บันทึกหมวดหมู่';
-  document.getElementById('cancelCatEditBtn').classList.add('d-none');
-}
+    function resetCategoryForm() {
+      editingCategoryId = null;
+      document.getElementById('categoryForm').reset();
+      document.getElementById('CategoryID').value = '';
+      document.getElementById('catFormHeaderTitle').textContent = 'เพิ่มหมวดหมู่ใหม่';
+      document.getElementById('catFormModeBadge').textContent = 'Create Mode';
+      document.getElementById('catFormModeBadge').className = 'badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 rounded-pill px-2 py-1';
+      document.getElementById('saveCategoryBtnText').textContent = 'บันทึกหมวดหมู่';
+      document.getElementById('cancelCatEditBtn').classList.add('d-none');
+    }
 
-document.getElementById('categoryForm').addEventListener('submit', async function(e) {
-  e.preventDefault();
-  const name = document.getElementById('CategoryName').value.trim();
-  if (!name) {
-    document.getElementById('CategoryName').classList.add('is-invalid');
-    return;
-  }
-  document.getElementById('CategoryName').classList.remove('is-invalid');
+    document.getElementById('categoryForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      const name = document.getElementById('CategoryName').value.trim();
+      if (!name) {
+        document.getElementById('CategoryName').classList.add('is-invalid');
+        return;
+      }
+      document.getElementById('CategoryName').classList.remove('is-invalid');
 
-  const payload = {
-    CategoryName: name,
-    Description: document.getElementById('CategoryDesc').value.trim()
-  };
+      const payload = {
+        CategoryName: name,
+        Description: document.getElementById('CategoryDesc').value.trim()
+      };
 
-  if (editingCategoryId) payload.CategoryID = editingCategoryId;
+      if (editingCategoryId) payload.CategoryID = editingCategoryId;
 
-  try {
-    const method = editingCategoryId ? 'PUT' : 'POST';
-    const res = await apiRequest(`${API_BASE}?resource=categories`, {
-      method: method,
-      body: JSON.stringify(payload)
+      try {
+        const method = editingCategoryId ? 'PUT' : 'POST';
+        const res = await apiRequest(`${API_BASE}?resource=categories`, {
+          method: method,
+          body: JSON.stringify(payload)
+        });
+        showToast(res.message || 'บันทึกข้อมูลหมวดหมู่สำเร็จ', 'success');
+        resetCategoryForm();
+        await loadMetadata();
+      } catch (err) {
+        showToast('บันทึกไม่สำเร็จ: ' + err.message, 'danger');
+      }
     });
-    showToast(res.message || 'บันทึกข้อมูลหมวดหมู่สำเร็จ', 'success');
-    resetCategoryForm();
-    await loadMetadata();
-  } catch (err) {
-    showToast('บันทึกไม่สำเร็จ: ' + err.message, 'danger');
-  }
-});
 
-async function deleteCategory(id) {
-  if (!confirm(`คุณต้องการลบหมวดหมู่รหัส #${id} หรือไม่?`)) return;
-  try {
-    const res = await apiRequest(`${API_BASE}?resource=categories`, {
-      method: 'DELETE',
-      body: JSON.stringify({ CategoryID: id })
-    });
-    showToast(res.message || 'ลบหมวดหมู่สำเร็จ', 'success');
-    await loadMetadata();
-  } catch (err) {
-    showToast('ลบไม่สำเร็จ: ' + err.message, 'danger');
-  }
-}
+    async function deleteCategory(id) {
+      if (!confirm(`คุณต้องการลบหมวดหมู่รหัส #${id} หรือไม่?`)) return;
+      try {
+        const res = await apiRequest(`${API_BASE}?resource=categories`, {
+          method: 'DELETE',
+          body: JSON.stringify({ CategoryID: id })
+        });
+        showToast(res.message || 'ลบหมวดหมู่สำเร็จ', 'success');
+        await loadMetadata();
+      } catch (err) {
+        showToast('ลบไม่สำเร็จ: ' + err.message, 'danger');
+      }
+    }
 
     // --- Load Products Data ---
     async function loadProducts() {
@@ -1634,95 +1540,6 @@ async function deleteCategory(id) {
         (s.Country && s.Country.toLowerCase().includes(q))
       );
       renderSuppliersTab(filtered);
-    });
-
-    // --- Add Supplier Form Handler ---
-    document.getElementById('addSupplierForm').addEventListener('submit', async function(e) {
-      e.preventDefault();
-      const nameInput = document.getElementById('addSupplierName');
-      const name = nameInput.value.trim();
-
-      if (!name) {
-        nameInput.classList.add('is-invalid');
-        return;
-      }
-      nameInput.classList.remove('is-invalid');
-
-      const payload = {
-        SupplierName: name,
-        ContactName: document.getElementById('addContactName').value.trim(),
-        Address: document.getElementById('addAddress').value.trim(),
-        City: document.getElementById('addCity').value.trim(),
-        PostalCode: document.getElementById('addPostalCode').value.trim(),
-        Country: document.getElementById('addCountry').value.trim(),
-        Phone: document.getElementById('addPhone').value.trim(),
-      };
-
-      const btn = document.getElementById('saveSupplierBtn');
-      btn.disabled = true;
-      btn.innerHTML = `<span class="spinner-border spinner-border-sm me-1"></span>กำลังบันทึก...`;
-
-      try {
-        const res = await apiRequest(`${API_BASE}?resource=suppliers`, {
-          method: 'POST',
-          body: JSON.stringify(payload)
-        });
-        addSupplierModal.hide();
-        this.reset();
-        showToast(res.message || 'เพิ่มผู้จัดส่งสินค้าสำเร็จ', 'success');
-        try {
-          await loadMetadata();
-        } catch (postErr) {
-          console.warn('Post-supplier refresh error:', postErr);
-        }
-      } catch (err) {
-        showToast('เพิ่มผู้จัดส่งไม่สำเร็จ: ' + err.message, 'danger');
-      } finally {
-        btn.disabled = false;
-        btn.innerHTML = `<i class="bi bi-plus-circle me-1"></i>บันทึกผู้จัดส่ง`;
-      }
-    });
-
-    // --- Add Category Form Handler ---
-    document.getElementById('addCategoryForm').addEventListener('submit', async function(e) {
-      e.preventDefault();
-      const nameInput = document.getElementById('addCategoryName');
-      const name = nameInput.value.trim();
-
-      if (!name) {
-        nameInput.classList.add('is-invalid');
-        return;
-      }
-      nameInput.classList.remove('is-invalid');
-
-      const payload = {
-        CategoryName: name,
-        Description: document.getElementById('addCategoryDesc').value.trim(),
-      };
-
-      const btn = document.getElementById('saveCategoryBtn');
-      btn.disabled = true;
-      btn.innerHTML = `<span class="spinner-border spinner-border-sm me-1"></span>กำลังบันทึก...`;
-
-      try {
-        const res = await apiRequest(`${API_BASE}?resource=categories`, {
-          method: 'POST',
-          body: JSON.stringify(payload)
-        });
-        addCategoryModal.hide();
-        this.reset();
-        showToast(res.message || 'เพิ่มหมวดหมู่สินค้าสำเร็จ', 'success');
-        try {
-          await loadMetadata();
-        } catch (postErr) {
-          console.warn('Post-category refresh error:', postErr);
-        }
-      } catch (err) {
-        showToast('เพิ่มหมวดหมู่ไม่สำเร็จ: ' + err.message, 'danger');
-      } finally {
-        btn.disabled = false;
-        btn.innerHTML = `<i class="bi bi-plus-circle me-1"></i>บันทึกหมวดหมู่`;
-      }
     });
 
     // --- Initialization on page load ---
