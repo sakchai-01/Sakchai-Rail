@@ -20,17 +20,18 @@ declare(strict_types=1);
 
   <style>
     :root {
-      --primary-color: #4f46e5;
-      --primary-hover: #4338ca;
-      --primary-light: #eef2ff;
-      --secondary-color: #0ea5e9;
+      /* ปรับเป็นโทนสีเขียว Modern Emerald / Forest */
+      --primary-color: #10b981;      /* สีเขียวหลัก (Emerald) */
+      --primary-hover: #059669;      /* สีเขียวเข้มเมื่อ Hover */
+      --primary-light: #ecfdf5;      /* สีเขียวอ่อนสำหรับ Background / Highlight */
+      --secondary-color: #0d9488;    /* สีเขียวน้ำทะเล (Teal) สำหรับ Gradient Logo */
       --success-color: #10b981;
       --danger-color: #ef4444;
-      --dark-text: #1e293b;
-      --muted-text: #64748b;
+      --dark-text: #0f172a;
+      --muted-text: #475569;
       --bg-surface: #ffffff;
-      --bg-body: #f8fafc;
-      --border-color: #e2e8f0;
+      --bg-body: #f0fdf4;            /* พื้นหลังสีขาวอมเขียวอ่อนมากๆ ดูสบายตา */
+      --border-color: #cbd5e1;
       --radius-lg: 16px;
       --radius-md: 12px;
     }
