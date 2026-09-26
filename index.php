@@ -248,9 +248,9 @@ declare(strict_types=1);
   <!-- Floating Toast Notifications Container -->
   <div id="toastContainer" class="toast-container-custom"></div>
 
-  <!-- Top Navbar -->
+ <!-- Top Navbar -->
   <header class="top-navbar py-2 px-3 px-lg-4 mb-4">
-    <div class="container-fluid d-flex flex-wrap justify-content-between align-items-center gap-2" style="max-width: 1560px;">
+    <div class="container-fluid d-flex flex-wrap justify-content-between align-items-center gap-2">
       <div class="d-flex align-items-center gap-3">
         <div class="brand-logo-icon">
           <i class="bi bi-boxes"></i>
@@ -258,7 +258,6 @@ declare(strict_types=1);
         <div>
           <div class="d-flex align-items-center gap-2">
             <h1 class="h5 fw-bold mb-0">DB-Northwind</h1>
-
           </div>
           <p class="text-muted small mb-0">ระบบบริหารจัดการสินค้า • PHP & MySQL</p>
         </div>
@@ -275,7 +274,7 @@ declare(strict_types=1);
       </div>
     </div>
   </header>
-
+  
   <!-- Main Workspace -->
   <main class="container-fluid px-4 mb-5">
 
