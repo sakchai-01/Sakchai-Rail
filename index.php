@@ -1307,6 +1307,16 @@ declare(strict_types=1);
       }
     });
 
+    // สร้างฟังก์ชันช่วยคืนค่าปุ่มโดยเฉพาะ
+    function releaseSaveButton() {
+      const saveBtn = document.getElementById('saveProductBtn');
+      if (saveBtn) {
+        saveBtn.disabled = false;
+        saveBtn.style.opacity = "1";
+      }
+      updateSaveBtnLabel();
+    }
+
     function setFieldError(fieldId, errorMsg) {
       const field = document.getElementById(fieldId);
       field.classList.add('is-invalid');
